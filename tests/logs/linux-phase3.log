@@ -1,0 +1,23 @@
+2026-09-11: Linux 6.8.0-139-generic / GCC 13.3.0
+make -B all check-headers test: exit 0 (-Wall -Wextra -Werror, -lpthread)
+Common unit tests: proto, bqueue (1,000,000 jobs), ppm, filter, timer OK
+FIFO and SysV MQ loopback: 12KB / 512KB / 12MB, BYE handshake, leftover paths 0
+FIFO fault regression: OK
+
+make test-app IPC=sysv_mq: exit 0
+test_images: OK (256x256 input/GRAY output, all bytes)
+GRAY 100 requests: CSV seq coverage, statistics, BYE shutdown OK
+Application-invalid requests: 8 cases MSG_ERR, subsequent valid response OK
+2 clients x 1000 requests: 512x512 GRAY/EDGE, depth=4, complete seq coverage OK
+BLUR depth=16 and invalid CLI: OK
+Server/client thread counts: 5 / 4
+SIGINT: server and client exit 0 when individually interrupted; peer client fails with one error line
+Artifacts on test host: /tmp/ipcff-app.8iq4DW
+
+make test-mq: exit 0
+timeout 90s ./tests/test_mq
+test_mq: OK (소유 기록 없는 큐 보존·부분 생성 실패 회수)
+test_mq: OK (교차 seq·역순 청크·잘못된 청크 11종·W 한도·ID 격리)
+test_mq: OK (서버 SIGKILL·기록 기반 재시작·큐/파일 잔존 0)
+test_mq: OK (다른 ID 트래픽 중 실제 30초 정체 퇴역·클라 오류)
+

@@ -1,0 +1,29 @@
+Linux 6.8.0-139-generic #139-Ubuntu SMP PREEMPT_DYNAMIC Sat Aug  1 03:52:05 UTC 2026
+cc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0
+Copyright (C) 2023 Free Software Foundation, Inc.
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+cc -std=c11 -D_POSIX_C_SOURCE=200809L -Wall -Wextra -Werror -O2 -o tests/test_proto tests/test_proto.c common/proto.c common/bqueue.c common/ppm.c common/filter.c common/timer.c -lpthread -lm
+cc -std=c11 -D_POSIX_C_SOURCE=200809L -Wall -Wextra -Werror -O2 -o tests/test_bqueue tests/test_bqueue.c common/proto.c common/bqueue.c common/ppm.c common/filter.c common/timer.c -lpthread -lm
+cc -std=c11 -D_POSIX_C_SOURCE=200809L -Wall -Wextra -Werror -O2 -o tests/test_ppm tests/test_ppm.c common/proto.c common/bqueue.c common/ppm.c common/filter.c common/timer.c -lpthread -lm
+cc -std=c11 -D_POSIX_C_SOURCE=200809L -Wall -Wextra -Werror -O2 -o tests/test_filter tests/test_filter.c common/proto.c common/bqueue.c common/ppm.c common/filter.c common/timer.c -lpthread -lm
+cc -std=c11 -D_POSIX_C_SOURCE=200809L -Wall -Wextra -Werror -O2 -o tests/test_timer tests/test_timer.c common/proto.c common/bqueue.c common/ppm.c common/filter.c common/timer.c -lpthread -lm
+cc -std=c11 -D_POSIX_C_SOURCE=200809L -Wall -Wextra -Werror -O2 -o tests/test_ipc_loopback tests/test_ipc_loopback.c common/proto.c common/bqueue.c common/ppm.c common/filter.c common/timer.c ipc/ipc.c ipc/ipc_meta.c ipc/ipc_fifo.c -lpthread -lm
+cc -std=c11 -D_POSIX_C_SOURCE=200809L -Wall -Wextra -Werror -O2 -o tests/test_fifo_faults tests/test_fifo_faults.c common/proto.c common/bqueue.c common/ppm.c common/filter.c common/timer.c ipc/ipc.c ipc/ipc_meta.c ipc/ipc_fifo.c -lpthread -lm
+cc -std=c11 -D_POSIX_C_SOURCE=200809L -Wall -Wextra -Werror -O2 -fsyntax-only common/*.h ipc/*.h
+./tests/test_proto
+test_proto: OK (msg_hdr_t=48B)
+./tests/test_bqueue
+test_bqueue: OK (1000000건, 합계 125000500000)
+./tests/test_ppm
+test_ppm: OK (37x23 왕복·잘못된 입력 거절·픽셀 보존)
+./tests/test_filter
+test_filter: OK (gray/blur/edge 손계산 일치)
+./tests/test_timer
+test_timer: OK (nearest-rank·평균·처리량·표본 확장)
+./tests/test_ipc_loopback fifo
+test_ipc_loopback[fifo]: OK (12KB/512KB/12MB 왕복, 잔존 자원 0)
+timeout 15s ./tests/test_fifo_faults
+test_fifo_faults: OK (클라 사망·ID 격리·서버 사망·재시작·stop·잔존 0)
+

@@ -1,0 +1,539 @@
+Linux restart fix verification, 2026-11-13 KST
+Remote directory: /home/student/cestudent/22/ce22b035/ipcff-restart-fix.C8B8bM
+New regression failed on baseline ipc_meta.c (rc=134), passed after fix (rc=0).
+
+===== source.sha256 =====
+55a4aa3181e8a378f81d2549079f6b8c4aa6d41459022c8b8e9f63de7ca64c15  source.tar
+
+===== baseline-source.sha256 =====
+aa5a0ea31ef0a1cbb38540b77fd2b823269b1b41ff29cbed6f79d497549e3f4d  baseline-source.tar
+
+===== environment.txt =====
+Thu Nov 12 15:26:08 UTC 2026
+Linux tukorea-ce 6.8.0-147-generic #147-Ubuntu SMP PREEMPT_DYNAMIC Thu Sep 24 11:33:16 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux
+gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0
+Copyright (C) 2023 Free Software Foundation, Inc.
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+
+------ Message Queues --------
+key        msqid      owner      perms      used-bytes   messages    
+
+------ Shared Memory Segments --------
+key        shmid      owner      perms      bytes      nattch     status      
+
+------ Semaphore Arrays --------
+key        semid      owner      perms      nsems     
+
+
+===== summary.log =====
+regression-before rc=134
+regression-after rc=0
+START 2026-11-12T15:26:08Z build
+END 2026-11-12T15:26:33Z build rc=0
+START 2026-11-12T15:26:33Z individual-builds
+END 2026-11-12T15:26:46Z individual-builds rc=0
+START 2026-11-12T15:26:46Z units-ipc
+END 2026-11-12T15:26:51Z units-ipc rc=0
+START 2026-11-12T15:26:51Z mq-faults
+END 2026-11-12T15:27:28Z mq-faults rc=0
+START 2026-11-12T15:27:28Z shm-faults
+END 2026-11-12T15:27:39Z shm-faults rc=0
+START 2026-11-12T15:27:39Z clean-repeat-1
+END 2026-11-12T15:27:46Z clean-repeat-1 rc=0
+START 2026-11-12T15:27:46Z clean-repeat-2
+END 2026-11-12T15:27:54Z clean-repeat-2 rc=0
+START 2026-11-12T15:27:54Z clean-repeat-3
+END 2026-11-12T15:28:02Z clean-repeat-3 rc=0
+START 2026-11-12T15:28:02Z clean-repeat-4
+END 2026-11-12T15:28:09Z clean-repeat-4 rc=0
+START 2026-11-12T15:28:09Z clean-repeat-5
+END 2026-11-12T15:28:17Z clean-repeat-5 rc=0
+START 2026-11-12T15:28:17Z pipe-integration
+END 2026-11-12T15:28:37Z pipe-integration rc=0
+START 2026-11-12T15:28:37Z fifo-app
+END 2026-11-12T15:28:53Z fifo-app rc=0
+START 2026-11-12T15:28:53Z mq-app
+END 2026-11-12T15:30:48Z mq-app rc=0
+START 2026-11-12T15:30:48Z sysv-shm-app-d1
+END 2026-11-12T15:31:29Z sysv-shm-app-d1 rc=0
+START 2026-11-12T15:31:29Z sysv-shm-app-d4
+END 2026-11-12T15:31:45Z sysv-shm-app-d4 rc=0
+START 2026-11-12T15:31:45Z sysv-shm-app-d16
+END 2026-11-12T15:32:00Z sysv-shm-app-d16 rc=0
+START 2026-11-12T15:32:00Z posix-app
+END 2026-11-12T15:32:16Z posix-app rc=0
+START 2026-11-12T15:32:16Z bench-smoke
+END 2026-11-12T15:32:17Z bench-smoke rc=0
+START 2026-11-12T15:32:17Z docs
+END 2026-11-12T15:32:18Z docs rc=0
+START 2026-11-12T15:32:18Z inputs-check
+END 2026-11-12T15:32:18Z inputs-check rc=0
+ALL POST-FIX CHECKS PASSED
+
+===== regression-before-build.log =====
+cc -std=c11 -D_POSIX_C_SOURCE=200809L -Wall -Wextra -Werror -O2 -o tests/test_team tests/test_team.c src/common/proto.c src/common/bqueue.c src/common/ppm.c src/common/filter.c src/common/timer.c src/common/resource.c src/ipc/ipc.c src/ipc/ipc_meta.c src/ipc/ipc_pipe.c src/ipc/ipc_fifo.c src/ipc/ipc_sysv_mq.c src/ipc/mq_lifecycle.c src/ipc/ipc_owned.c src/ipc/ipc_sysv_shm.c src/ipc/shm_ring.c src/ipc/ipc_posix_shm.c src/ipc/pshm_owned.c src/common/app.c -lpthread -lrt
+
+===== regression-before.log =====
+test_team: tests/test_team.c:113: startup_metadata: Assertion `meta_wait_ready(fd, &loaded, 40) == -1 && errno == ETIMEDOUT' failed.
+timeout: the monitored command dumped core
+
+===== regression-after-build.log =====
+cc -std=c11 -D_POSIX_C_SOURCE=200809L -Wall -Wextra -Werror -O2 -o tests/test_team tests/test_team.c src/common/proto.c src/common/bqueue.c src/common/ppm.c src/common/filter.c src/common/timer.c src/common/resource.c src/ipc/ipc.c src/ipc/ipc_meta.c src/ipc/ipc_pipe.c src/ipc/ipc_fifo.c src/ipc/ipc_sysv_mq.c src/ipc/mq_lifecycle.c src/ipc/ipc_owned.c src/ipc/ipc_sysv_shm.c src/ipc/shm_ring.c src/ipc/ipc_posix_shm.c src/ipc/pshm_owned.c src/common/app.c -lpthread -lrt
+
+===== regression-after.log =====
+Startup: stale ready without owner/with new PID and ready=0 rejected; new server claims ID; cancellation OK
+Team: fifo mismatch before ID claim, two-team isolation, cleanup OK
+Team: sysv_mq mismatch before ID claim, two-team isolation, cleanup OK
+Team: sysv_shm mismatch before ID claim, two-team isolation, cleanup OK
+Team: posix_shm mismatch before ID claim, two-team isolation, cleanup OK
+
+===== build.log =====
+make -j2 all check-headers 
+cc -std=c11 -D_POSIX_C_SOURCE=200809L -Wall -Wextra -Werror -O2 -o server src/server.c src/common/app.c src/common/proto.c src/common/bqueue.c src/common/ppm.c src/common/filter.c src/common/timer.c src/common/resource.c src/ipc/ipc.c src/ipc/ipc_meta.c src/ipc/ipc_pipe.c src/ipc/ipc_fifo.c src/ipc/ipc_sysv_mq.c src/ipc/mq_lifecycle.c src/ipc/ipc_owned.c src/ipc/ipc_sysv_shm.c src/ipc/shm_ring.c src/ipc/ipc_posix_shm.c src/ipc/pshm_owned.c -lpthread -lrt
+cc -std=c11 -D_POSIX_C_SOURCE=200809L -Wall -Wextra -Werror -O2 -o client src/client.c src/common/app.c src/common/proto.c src/common/bqueue.c src/common/ppm.c src/common/filter.c src/common/timer.c src/common/resource.c src/ipc/ipc.c src/ipc/ipc_meta.c src/ipc/ipc_pipe.c src/ipc/ipc_fifo.c src/ipc/ipc_sysv_mq.c src/ipc/mq_lifecycle.c src/ipc/ipc_owned.c src/ipc/ipc_sysv_shm.c src/ipc/shm_ring.c src/ipc/ipc_posix_shm.c src/ipc/pshm_owned.c -lpthread -lrt
+cc -std=c11 -D_POSIX_C_SOURCE=200809L -Wall -Wextra -Werror -O2    src/pipe_run.c  -lpthread -lrt -o pipe_run
+cc -std=c11 -D_POSIX_C_SOURCE=200809L -Wall -Wextra -Werror -O2 -DBASIC_BENCH=1 -DSLOT_COUNT=8 -o basic_server src/server.c src/common/app.c src/common/proto.c src/common/bqueue.c src/common/ppm.c src/common/filter.c src/common/timer.c src/common/resource.c src/ipc/ipc.c src/ipc/ipc_meta.c src/ipc/ipc_pipe.c src/ipc/ipc_fifo.c src/ipc/ipc_sysv_mq.c src/ipc/mq_lifecycle.c src/ipc/ipc_owned.c src/ipc/ipc_sysv_shm.c src/ipc/shm_ring.c src/ipc/ipc_posix_shm.c src/ipc/pshm_owned.c -lpthread -lrt
+cc -std=c11 -D_POSIX_C_SOURCE=200809L -Wall -Wextra -Werror -O2 -DBASIC_BENCH=1 -DSLOT_COUNT=8 -o basic_client src/client.c src/common/app.c src/common/proto.c src/common/bqueue.c src/common/ppm.c src/common/filter.c src/common/timer.c src/common/resource.c src/ipc/ipc.c src/ipc/ipc_meta.c src/ipc/ipc_pipe.c src/ipc/ipc_fifo.c src/ipc/ipc_sysv_mq.c src/ipc/mq_lifecycle.c src/ipc/ipc_owned.c src/ipc/ipc_sysv_shm.c src/ipc/shm_ring.c src/ipc/ipc_posix_shm.c src/ipc/pshm_owned.c -lpthread -lrt
+cc -std=c11 -D_POSIX_C_SOURCE=200809L -Wall -Wextra -Werror -O2 -o clean_ipc src/clean_ipc.c src/ipc/ipc_meta.c src/ipc/ipc_owned.c src/ipc/pshm_owned.c -lpthread -lrt
+cc -std=c11 -D_POSIX_C_SOURCE=200809L -Wall -Wextra -Werror -O2 -DBASIC_BENCH=1 -DSLOT_COUNT=8 -o basic_clean_ipc src/clean_ipc.c src/ipc/ipc_meta.c src/ipc/ipc_owned.c src/ipc/pshm_owned.c -lpthread -lrt
+cc -std=c11 -D_POSIX_C_SOURCE=200809L -Wall -Wextra -Werror -O2 -o bench/aggregate bench/aggregate.c
+cc -std=c11 -D_POSIX_C_SOURCE=200809L -Wall -Wextra -Werror -O2 -o bench/inspect bench/inspect.c
+cc -std=c11 -D_POSIX_C_SOURCE=200809L -Wall -Wextra -Werror -O2 -o tests/test_proto tests/test_proto.c src/common/proto.c src/common/bqueue.c src/common/ppm.c src/common/filter.c src/common/timer.c src/common/resource.c -lpthread -lrt
+cc -std=c11 -D_POSIX_C_SOURCE=200809L -Wall -Wextra -Werror -O2 -o tests/test_bqueue tests/test_bqueue.c src/common/proto.c src/common/bqueue.c src/common/ppm.c src/common/filter.c src/common/timer.c src/common/resource.c -lpthread -lrt
+cc -std=c11 -D_POSIX_C_SOURCE=200809L -Wall -Wextra -Werror -O2 -o tests/test_ppm tests/test_ppm.c src/common/proto.c src/common/bqueue.c src/common/ppm.c src/common/filter.c src/common/timer.c src/common/resource.c -lpthread -lrt
+cc -std=c11 -D_POSIX_C_SOURCE=200809L -Wall -Wextra -Werror -O2 -o tests/test_filter tests/test_filter.c src/common/proto.c src/common/bqueue.c src/common/ppm.c src/common/filter.c src/common/timer.c src/common/resource.c -lpthread -lrt
+cc -std=c11 -D_POSIX_C_SOURCE=200809L -Wall -Wextra -Werror -O2 -o tests/test_timer tests/test_timer.c src/common/proto.c src/common/bqueue.c src/common/ppm.c src/common/filter.c src/common/timer.c src/common/resource.c -lpthread -lrt
+cc -std=c11 -D_POSIX_C_SOURCE=200809L -Wall -Wextra -Werror -O2 -o tests/test_ipc_util tests/test_ipc_util.c -lpthread -lrt
+cc -std=c11 -D_POSIX_C_SOURCE=200809L -Wall -Wextra -Werror -O2 -DIPC_BACKENDS=2 -o tests/test_app_options tests/test_app_options.c src/common/app.c src/ipc/ipc.c src/ipc/ipc_fifo.c src/ipc/ipc_meta.c -lpthread -lrt
+cc -std=c11 -D_POSIX_C_SOURCE=200809L -Wall -Wextra -Werror -O2 -DBASIC_BENCH=1 -DSLOT_COUNT=8 -DIPC_BACKENDS=2 -o tests/test_basic_options tests/test_app_options.c src/common/app.c src/ipc/ipc.c src/ipc/ipc_fifo.c src/ipc/ipc_meta.c -lpthread -lrt
+cc -std=c11 -D_POSIX_C_SOURCE=200809L -Wall -Wextra -Werror -O2 -o tests/test_images tests/test_images.c src/common/proto.c src/common/bqueue.c src/common/ppm.c src/common/filter.c src/common/timer.c src/common/resource.c -lpthread -lrt
+cc -std=c11 -D_POSIX_C_SOURCE=200809L -Wall -Wextra -Werror -O2 -o tests/test_ipc_loopback tests/test_ipc_loopback.c src/common/proto.c src/common/bqueue.c src/common/ppm.c src/common/filter.c src/common/timer.c src/common/resource.c src/ipc/ipc.c src/ipc/ipc_meta.c src/ipc/ipc_pipe.c src/ipc/ipc_fifo.c src/ipc/ipc_sysv_mq.c src/ipc/mq_lifecycle.c src/ipc/ipc_owned.c src/ipc/ipc_sysv_shm.c src/ipc/shm_ring.c src/ipc/ipc_posix_shm.c src/ipc/pshm_owned.c -lpthread -lrt
+cc -std=c11 -D_POSIX_C_SOURCE=200809L -Wall -Wextra -Werror -O2 -o tests/test_fifo_faults tests/test_fifo_faults.c src/common/proto.c src/common/bqueue.c src/common/ppm.c src/common/filter.c src/common/timer.c src/common/resource.c src/ipc/ipc.c src/ipc/ipc_meta.c src/ipc/ipc_pipe.c src/ipc/ipc_fifo.c src/ipc/ipc_sysv_mq.c src/ipc/mq_lifecycle.c src/ipc/ipc_owned.c src/ipc/ipc_sysv_shm.c src/ipc/shm_ring.c src/ipc/ipc_posix_shm.c src/ipc/pshm_owned.c -lpthread -lrt
+cc -std=c11 -D_POSIX_C_SOURCE=200809L -Wall -Wextra -Werror -O2 -o tests/test_app_protocol tests/test_app_protocol.c src/common/proto.c src/common/bqueue.c src/common/ppm.c src/common/filter.c src/common/timer.c src/common/resource.c src/ipc/ipc.c src/ipc/ipc_meta.c src/ipc/ipc_pipe.c src/ipc/ipc_fifo.c src/ipc/ipc_sysv_mq.c src/ipc/mq_lifecycle.c src/ipc/ipc_owned.c src/ipc/ipc_sysv_shm.c src/ipc/shm_ring.c src/ipc/ipc_posix_shm.c src/ipc/pshm_owned.c -lpthread -lrt
+cc -std=c11 -D_POSIX_C_SOURCE=200809L -Wall -Wextra -Werror -O2 -o tests/test_client_protocol tests/test_client_protocol.c src/common/proto.c src/common/bqueue.c src/common/ppm.c src/common/filter.c src/common/timer.c src/common/resource.c src/ipc/ipc.c src/ipc/ipc_meta.c src/ipc/ipc_pipe.c src/ipc/ipc_fifo.c src/ipc/ipc_sysv_mq.c src/ipc/mq_lifecycle.c src/ipc/ipc_owned.c src/ipc/ipc_sysv_shm.c src/ipc/shm_ring.c src/ipc/ipc_posix_shm.c src/ipc/pshm_owned.c -lpthread -lrt
+cc -std=c11 -D_POSIX_C_SOURCE=200809L -Wall -Wextra -Werror -O2 -o tests/test_mq tests/test_mq.c src/common/proto.c src/common/bqueue.c src/common/ppm.c src/common/filter.c src/common/timer.c src/common/resource.c src/ipc/ipc.c src/ipc/ipc_meta.c src/ipc/ipc_pipe.c src/ipc/ipc_fifo.c src/ipc/ipc_sysv_mq.c src/ipc/mq_lifecycle.c src/ipc/ipc_owned.c src/ipc/ipc_sysv_shm.c src/ipc/shm_ring.c src/ipc/ipc_posix_shm.c src/ipc/pshm_owned.c -lpthread -lrt
+cc -std=c11 -D_POSIX_C_SOURCE=200809L -Wall -Wextra -Werror -O2 -o tests/test_shm tests/test_shm.c src/common/proto.c src/common/bqueue.c src/common/ppm.c src/common/filter.c src/common/timer.c src/common/resource.c src/ipc/ipc.c src/ipc/ipc_meta.c src/ipc/ipc_pipe.c src/ipc/ipc_fifo.c src/ipc/ipc_sysv_mq.c src/ipc/mq_lifecycle.c src/ipc/ipc_owned.c src/ipc/ipc_sysv_shm.c src/ipc/shm_ring.c src/ipc/ipc_posix_shm.c src/ipc/pshm_owned.c -lpthread -lrt
+cc -std=c11 -D_POSIX_C_SOURCE=200809L -Wall -Wextra -Werror -O2 -o tests/test_posix tests/test_posix.c src/common/proto.c src/common/bqueue.c src/common/ppm.c src/common/filter.c src/common/timer.c src/common/resource.c src/ipc/ipc.c src/ipc/ipc_meta.c src/ipc/ipc_pipe.c src/ipc/ipc_fifo.c src/ipc/ipc_sysv_mq.c src/ipc/mq_lifecycle.c src/ipc/ipc_owned.c src/ipc/ipc_sysv_shm.c src/ipc/shm_ring.c src/ipc/ipc_posix_shm.c src/ipc/pshm_owned.c -lpthread -lrt -Wl,--wrap=sem_destroy -Wl,--wrap=sem_init -Wl,--wrap=posix_fallocate
+cc -std=c11 -D_POSIX_C_SOURCE=200809L -Wall -Wextra -Werror -O2 -o tests/test_pipe_protocol tests/test_pipe_protocol.c src/common/proto.c src/common/bqueue.c src/common/ppm.c src/common/filter.c src/common/timer.c src/common/resource.c src/ipc/ipc.c src/ipc/ipc_meta.c src/ipc/ipc_pipe.c src/ipc/ipc_fifo.c src/ipc/ipc_sysv_mq.c src/ipc/mq_lifecycle.c src/ipc/ipc_owned.c src/ipc/ipc_sysv_shm.c src/ipc/shm_ring.c src/ipc/ipc_posix_shm.c src/ipc/pshm_owned.c -lpthread -lrt
+cc -std=c11 -D_POSIX_C_SOURCE=200809L -Wall -Wextra -Werror -O2 -fsyntax-only src/common/*.h src/ipc/*.h
+
+===== individual-builds.log =====
+make -j2 phase1-pipe phase1-sysv_mq phase1-sysv_shm phase2-pipe phase2-sysv_mq phase2-sysv_shm 
+cc -std=c11 -D_POSIX_C_SOURCE=200809L -Wall -Wextra -Werror -O2 -DBASIC_BENCH=1 -DSLOT_COUNT=8 -DIPC_BACKENDS=1 -o build/phase1/pipe/basic_server src/server.c src/common/app.c src/common/proto.c src/common/bqueue.c src/common/ppm.c src/common/filter.c src/common/timer.c src/common/resource.c src/ipc/ipc.c src/ipc/ipc_meta.c src/ipc/ipc_pipe.c -lpthread -lrt
+cc -std=c11 -D_POSIX_C_SOURCE=200809L -Wall -Wextra -Werror -O2 -DBASIC_BENCH=1 -DSLOT_COUNT=8 -DIPC_BACKENDS=1 -o build/phase1/pipe/basic_client src/client.c src/common/app.c src/common/proto.c src/common/bqueue.c src/common/ppm.c src/common/filter.c src/common/timer.c src/common/resource.c src/ipc/ipc.c src/ipc/ipc_meta.c src/ipc/ipc_pipe.c -lpthread -lrt
+cc -std=c11 -D_POSIX_C_SOURCE=200809L -Wall -Wextra -Werror -O2 -o build/phase1/pipe/pipe_run src/pipe_run.c
+cc -std=c11 -D_POSIX_C_SOURCE=200809L -Wall -Wextra -Werror -O2 -DBASIC_BENCH=1 -DSLOT_COUNT=8 -DIPC_BACKENDS=4 -o build/phase1/sysv_mq/basic_server src/server.c src/common/app.c src/common/proto.c src/common/bqueue.c src/common/ppm.c src/common/filter.c src/common/timer.c src/common/resource.c src/ipc/ipc.c src/ipc/ipc_meta.c src/ipc/ipc_sysv_mq.c src/ipc/mq_lifecycle.c src/ipc/ipc_owned.c -lpthread -lrt
+cc -std=c11 -D_POSIX_C_SOURCE=200809L -Wall -Wextra -Werror -O2 -DBASIC_BENCH=1 -DSLOT_COUNT=8 -DIPC_BACKENDS=4 -o build/phase1/sysv_mq/basic_client src/client.c src/common/app.c src/common/proto.c src/common/bqueue.c src/common/ppm.c src/common/filter.c src/common/timer.c src/common/resource.c src/ipc/ipc.c src/ipc/ipc_meta.c src/ipc/ipc_sysv_mq.c src/ipc/mq_lifecycle.c src/ipc/ipc_owned.c -lpthread -lrt
+cc -std=c11 -D_POSIX_C_SOURCE=200809L -Wall -Wextra -Werror -O2 -o build/phase1/sysv_mq/pipe_run src/pipe_run.c
+cc -std=c11 -D_POSIX_C_SOURCE=200809L -Wall -Wextra -Werror -O2 -DBASIC_BENCH=1 -DSLOT_COUNT=8 -DIPC_BACKENDS=8 -o build/phase1/sysv_shm/basic_server src/server.c src/common/app.c src/common/proto.c src/common/bqueue.c src/common/ppm.c src/common/filter.c src/common/timer.c src/common/resource.c src/ipc/ipc.c src/ipc/ipc_meta.c src/ipc/ipc_sysv_shm.c src/ipc/shm_ring.c src/ipc/ipc_owned.c -lpthread -lrt
+cc -std=c11 -D_POSIX_C_SOURCE=200809L -Wall -Wextra -Werror -O2 -DBASIC_BENCH=1 -DSLOT_COUNT=8 -DIPC_BACKENDS=8 -o build/phase1/sysv_shm/basic_client src/client.c src/common/app.c src/common/proto.c src/common/bqueue.c src/common/ppm.c src/common/filter.c src/common/timer.c src/common/resource.c src/ipc/ipc.c src/ipc/ipc_meta.c src/ipc/ipc_sysv_shm.c src/ipc/shm_ring.c src/ipc/ipc_owned.c -lpthread -lrt
+cc -std=c11 -D_POSIX_C_SOURCE=200809L -Wall -Wextra -Werror -O2 -o build/phase1/sysv_shm/pipe_run src/pipe_run.c
+cc -std=c11 -D_POSIX_C_SOURCE=200809L -Wall -Wextra -Werror -O2 -DIPC_BACKENDS=1 -o build/phase2/pipe/server src/server.c src/common/app.c src/common/proto.c src/common/bqueue.c src/common/ppm.c src/common/filter.c src/common/timer.c src/common/resource.c src/ipc/ipc.c src/ipc/ipc_meta.c src/ipc/ipc_pipe.c -lpthread -lrt
+cc -std=c11 -D_POSIX_C_SOURCE=200809L -Wall -Wextra -Werror -O2 -DIPC_BACKENDS=1 -o build/phase2/pipe/client src/client.c src/common/app.c src/common/proto.c src/common/bqueue.c src/common/ppm.c src/common/filter.c src/common/timer.c src/common/resource.c src/ipc/ipc.c src/ipc/ipc_meta.c src/ipc/ipc_pipe.c -lpthread -lrt
+cc -std=c11 -D_POSIX_C_SOURCE=200809L -Wall -Wextra -Werror -O2 -o build/phase2/pipe/pipe_run src/pipe_run.c
+cc -std=c11 -D_POSIX_C_SOURCE=200809L -Wall -Wextra -Werror -O2 -DIPC_BACKENDS=4 -o build/phase2/sysv_mq/server src/server.c src/common/app.c src/common/proto.c src/common/bqueue.c src/common/ppm.c src/common/filter.c src/common/timer.c src/common/resource.c src/ipc/ipc.c src/ipc/ipc_meta.c src/ipc/ipc_sysv_mq.c src/ipc/mq_lifecycle.c src/ipc/ipc_owned.c -lpthread -lrt
+cc -std=c11 -D_POSIX_C_SOURCE=200809L -Wall -Wextra -Werror -O2 -DIPC_BACKENDS=4 -o build/phase2/sysv_mq/client src/client.c src/common/app.c src/common/proto.c src/common/bqueue.c src/common/ppm.c src/common/filter.c src/common/timer.c src/common/resource.c src/ipc/ipc.c src/ipc/ipc_meta.c src/ipc/ipc_sysv_mq.c src/ipc/mq_lifecycle.c src/ipc/ipc_owned.c -lpthread -lrt
+cc -std=c11 -D_POSIX_C_SOURCE=200809L -Wall -Wextra -Werror -O2 -o build/phase2/sysv_mq/pipe_run src/pipe_run.c
+cc -std=c11 -D_POSIX_C_SOURCE=200809L -Wall -Wextra -Werror -O2 -DIPC_BACKENDS=8 -o build/phase2/sysv_shm/server src/server.c src/common/app.c src/common/proto.c src/common/bqueue.c src/common/ppm.c src/common/filter.c src/common/timer.c src/common/resource.c src/ipc/ipc.c src/ipc/ipc_meta.c src/ipc/ipc_sysv_shm.c src/ipc/shm_ring.c src/ipc/ipc_owned.c -lpthread -lrt
+cc -std=c11 -D_POSIX_C_SOURCE=200809L -Wall -Wextra -Werror -O2 -DIPC_BACKENDS=8 -o build/phase2/sysv_shm/client src/client.c src/common/app.c src/common/proto.c src/common/bqueue.c src/common/ppm.c src/common/filter.c src/common/timer.c src/common/resource.c src/ipc/ipc.c src/ipc/ipc_meta.c src/ipc/ipc_sysv_shm.c src/ipc/shm_ring.c src/ipc/ipc_owned.c -lpthread -lrt
+cc -std=c11 -D_POSIX_C_SOURCE=200809L -Wall -Wextra -Werror -O2 -o build/phase2/sysv_shm/pipe_run src/pipe_run.c
+
+===== units-ipc.log =====
+make test 
+./tests/test_proto
+test_proto: OK (msg_hdr_t=48B)
+./tests/test_bqueue
+test_bqueue: OK (1000000건, 합계 125000500000)
+./tests/test_ppm
+test_ppm: OK (37x23 왕복·잘못된 입력 거절·픽셀 보존)
+./tests/test_filter
+test_filter: OK (gray/blur/edge 손계산 일치)
+./tests/test_timer
+test_timer: OK (nearest-rank·평균·처리량·표본 확장)
+./tests/test_ipc_util
+test_ipc_util: OK (clock, unlock, owner stat, pio, unlink, nap)
+./tests/test_app_options
+test_app_options: OK (numeric bounds, malformed values, duplicates, roles, image/basic payloads)
+./tests/test_basic_options
+test_app_options: OK (numeric bounds, malformed values, duplicates, roles, image/basic payloads)
+timeout 20s ./tests/test_team
+Startup: stale ready without owner/with new PID and ready=0 rejected; new server claims ID; cancellation OK
+Team: fifo mismatch before ID claim, two-team isolation, cleanup OK
+Team: sysv_mq mismatch before ID claim, two-team isolation, cleanup OK
+Team: sysv_shm mismatch before ID claim, two-team isolation, cleanup OK
+Team: posix_shm mismatch before ID claim, two-team isolation, cleanup OK
+./tests/test_ipc_loopback fifo
+test_ipc_loopback[fifo]: OK (12KB/512KB/12MB 왕복, 잔존 자원 0)
+timeout 30s ./tests/test_ipc_loopback sysv_mq
+test_ipc_loopback[sysv_mq]: OK (12KB/512KB/12MB 왕복, 잔존 자원 0)
+timeout 30s ./tests/test_ipc_loopback sysv_shm
+test_ipc_loopback[sysv_shm]: OK (12KB/512KB/12MB 왕복, 잔존 자원 0)
+timeout 30s ./tests/test_ipc_loopback posix_shm
+test_ipc_loopback[posix_shm]: OK (12KB/512KB/12MB 왕복, 잔존 자원 0)
+timeout 15s ./tests/test_fifo_faults
+test_fifo_faults: OK (클라 사망·ID 격리·서버 사망·재시작·stop·잔존 0)
+timeout 20s ./tests/test_pipe_protocol
+pipe: partial-header EOF, spoofed ID isolation, EPIPE, cancellation OK
+
+===== mq-faults.log =====
+make test-mq 
+timeout 90s ./tests/test_mq
+test_mq: OK (소유 기록 없는 큐 보존·부분 생성 실패 회수)
+test_mq: OK (교차 seq·역순 청크·잘못된 청크 11종·W 한도·ID 격리)
+test_mq: OK (서버 SIGKILL·기록 기반 재시작·큐/파일 잔존 0)
+test_mq: OK (다른 ID 트래픽 중 실제 30초 정체 퇴역·클라 오류)
+
+===== shm-faults.log =====
+make test-shm 
+timeout 30s ./tests/test_shm sysv_shm
+clean-ipc: Resource temporarily unavailable
+clean-ipc: 소유 자원 회수 완료
+SHM: 2 clients x 1000 reverse responses, depth=1, odd stride OK
+SHM: 2 clients x 1000 reverse responses, depth=4, odd stride OK
+SHM: 2 clients x 1000 reverse responses, depth=16, odd stride OK
+SHM: killed token holder isolated, other ID 1000 matches, stop and resource removal OK
+SHM: server death <=5 seconds, live client prevents cleanup, kernel IDs removed OK
+SHM: unrecorded semaphore preserved and partial SHM creation removed OK
+timeout 30s ./tests/test_shm posix_shm
+SHM: 2 clients x 1000 reverse responses, depth=1, odd stride OK
+SHM: 2 clients x 1000 reverse responses, depth=4, odd stride OK
+SHM: 2 clients x 1000 reverse responses, depth=16, odd stride OK
+timeout 30s ./tests/test_posix
+clean-ipc: Resource temporarily unavailable
+clean-ipc: 소유 자원 회수 완료
+clean-ipc: File exists
+clean-ipc: 소유 자원 회수 완료
+POSIX: killed token holder is retired without token reset, exclusive destroy=16 OK
+POSIX: live client teardown skips all sem_destroy calls, <=5s return OK
+POSIX: SIGKILL server, live client cleanup refusal, <=5s return OK
+POSIX: unrecorded name collision preserves original object OK
+POSIX: shared header and CLI mismatch rejected before ring use OK
+POSIX: allocation failure and partial sem_init failure clean up only initialized semaphores OK
+POSIX: replaced inode preserved by clean and restart, original ownership record retained OK
+timeout 60s bash tests/test_clean.sh
+clean-ipc: 소유 자원 회수 완료
+clean-ipc: meta 없음, 변경 없음
+Cleanup: fifo active refusal, SIGKILL cleanup, repeated cleanup, restart OK
+clean-ipc: 소유 자원 회수 완료
+clean-ipc: meta 없음, 변경 없음
+Cleanup: sysv_mq active refusal, SIGKILL cleanup, repeated cleanup, restart OK
+clean-ipc: 소유 자원 회수 완료
+clean-ipc: meta 없음, 변경 없음
+Cleanup: sysv_shm active refusal, SIGKILL cleanup, repeated cleanup, restart OK
+clean-ipc: 소유 자원 회수 완료
+clean-ipc: meta 없음, 변경 없음
+Cleanup: posix_shm active refusal, SIGKILL cleanup, repeated cleanup, restart OK
+clean-ipc: 소유 자원 회수 완료
+Cleanup: mixed unknown record preserves known resources OK
+sysv_shm application: SIGKILL client isolation, 1000 matches, shutdown <=5 seconds OK
+posix_shm application: SIGKILL client isolation, 1000 matches, shutdown <=5 seconds OK
+clean-ipc: 소유 자원 회수 완료
+Cleanup: unrelated regular file preserved OK
+Artifacts: /tmp/ipcff-clean.x0LSir
+
+===== clean-repeat-1.log =====
+timeout 60s bash tests/test_clean.sh 
+clean-ipc: 소유 자원 회수 완료
+clean-ipc: meta 없음, 변경 없음
+Cleanup: fifo active refusal, SIGKILL cleanup, repeated cleanup, restart OK
+clean-ipc: 소유 자원 회수 완료
+clean-ipc: meta 없음, 변경 없음
+Cleanup: sysv_mq active refusal, SIGKILL cleanup, repeated cleanup, restart OK
+clean-ipc: 소유 자원 회수 완료
+clean-ipc: meta 없음, 변경 없음
+Cleanup: sysv_shm active refusal, SIGKILL cleanup, repeated cleanup, restart OK
+clean-ipc: 소유 자원 회수 완료
+clean-ipc: meta 없음, 변경 없음
+Cleanup: posix_shm active refusal, SIGKILL cleanup, repeated cleanup, restart OK
+clean-ipc: 소유 자원 회수 완료
+Cleanup: mixed unknown record preserves known resources OK
+sysv_shm application: SIGKILL client isolation, 1000 matches, shutdown <=5 seconds OK
+posix_shm application: SIGKILL client isolation, 1000 matches, shutdown <=5 seconds OK
+clean-ipc: 소유 자원 회수 완료
+Cleanup: unrelated regular file preserved OK
+Artifacts: /tmp/ipcff-clean.c70kwd
+
+===== clean-repeat-2.log =====
+timeout 60s bash tests/test_clean.sh 
+clean-ipc: 소유 자원 회수 완료
+clean-ipc: meta 없음, 변경 없음
+Cleanup: fifo active refusal, SIGKILL cleanup, repeated cleanup, restart OK
+clean-ipc: 소유 자원 회수 완료
+clean-ipc: meta 없음, 변경 없음
+Cleanup: sysv_mq active refusal, SIGKILL cleanup, repeated cleanup, restart OK
+clean-ipc: 소유 자원 회수 완료
+clean-ipc: meta 없음, 변경 없음
+Cleanup: sysv_shm active refusal, SIGKILL cleanup, repeated cleanup, restart OK
+clean-ipc: 소유 자원 회수 완료
+clean-ipc: meta 없음, 변경 없음
+Cleanup: posix_shm active refusal, SIGKILL cleanup, repeated cleanup, restart OK
+clean-ipc: 소유 자원 회수 완료
+Cleanup: mixed unknown record preserves known resources OK
+sysv_shm application: SIGKILL client isolation, 1000 matches, shutdown <=5 seconds OK
+posix_shm application: SIGKILL client isolation, 1000 matches, shutdown <=5 seconds OK
+clean-ipc: 소유 자원 회수 완료
+Cleanup: unrelated regular file preserved OK
+Artifacts: /tmp/ipcff-clean.rDuxMw
+
+===== clean-repeat-3.log =====
+timeout 60s bash tests/test_clean.sh 
+clean-ipc: 소유 자원 회수 완료
+clean-ipc: meta 없음, 변경 없음
+Cleanup: fifo active refusal, SIGKILL cleanup, repeated cleanup, restart OK
+clean-ipc: 소유 자원 회수 완료
+clean-ipc: meta 없음, 변경 없음
+Cleanup: sysv_mq active refusal, SIGKILL cleanup, repeated cleanup, restart OK
+clean-ipc: 소유 자원 회수 완료
+clean-ipc: meta 없음, 변경 없음
+Cleanup: sysv_shm active refusal, SIGKILL cleanup, repeated cleanup, restart OK
+clean-ipc: 소유 자원 회수 완료
+clean-ipc: meta 없음, 변경 없음
+Cleanup: posix_shm active refusal, SIGKILL cleanup, repeated cleanup, restart OK
+clean-ipc: 소유 자원 회수 완료
+Cleanup: mixed unknown record preserves known resources OK
+sysv_shm application: SIGKILL client isolation, 1000 matches, shutdown <=5 seconds OK
+posix_shm application: SIGKILL client isolation, 1000 matches, shutdown <=5 seconds OK
+clean-ipc: 소유 자원 회수 완료
+Cleanup: unrelated regular file preserved OK
+Artifacts: /tmp/ipcff-clean.Wb38mo
+
+===== clean-repeat-4.log =====
+timeout 60s bash tests/test_clean.sh 
+clean-ipc: 소유 자원 회수 완료
+clean-ipc: meta 없음, 변경 없음
+Cleanup: fifo active refusal, SIGKILL cleanup, repeated cleanup, restart OK
+clean-ipc: 소유 자원 회수 완료
+clean-ipc: meta 없음, 변경 없음
+Cleanup: sysv_mq active refusal, SIGKILL cleanup, repeated cleanup, restart OK
+clean-ipc: 소유 자원 회수 완료
+clean-ipc: meta 없음, 변경 없음
+Cleanup: sysv_shm active refusal, SIGKILL cleanup, repeated cleanup, restart OK
+clean-ipc: 소유 자원 회수 완료
+clean-ipc: meta 없음, 변경 없음
+Cleanup: posix_shm active refusal, SIGKILL cleanup, repeated cleanup, restart OK
+clean-ipc: 소유 자원 회수 완료
+Cleanup: mixed unknown record preserves known resources OK
+sysv_shm application: SIGKILL client isolation, 1000 matches, shutdown <=5 seconds OK
+posix_shm application: SIGKILL client isolation, 1000 matches, shutdown <=5 seconds OK
+clean-ipc: 소유 자원 회수 완료
+Cleanup: unrelated regular file preserved OK
+Artifacts: /tmp/ipcff-clean.L092uA
+
+===== clean-repeat-5.log =====
+timeout 60s bash tests/test_clean.sh 
+clean-ipc: 소유 자원 회수 완료
+clean-ipc: meta 없음, 변경 없음
+Cleanup: fifo active refusal, SIGKILL cleanup, repeated cleanup, restart OK
+clean-ipc: 소유 자원 회수 완료
+clean-ipc: meta 없음, 변경 없음
+Cleanup: sysv_mq active refusal, SIGKILL cleanup, repeated cleanup, restart OK
+clean-ipc: 소유 자원 회수 완료
+clean-ipc: meta 없음, 변경 없음
+Cleanup: sysv_shm active refusal, SIGKILL cleanup, repeated cleanup, restart OK
+clean-ipc: 소유 자원 회수 완료
+clean-ipc: meta 없음, 변경 없음
+Cleanup: posix_shm active refusal, SIGKILL cleanup, repeated cleanup, restart OK
+clean-ipc: 소유 자원 회수 완료
+Cleanup: mixed unknown record preserves known resources OK
+sysv_shm application: SIGKILL client isolation, 1000 matches, shutdown <=5 seconds OK
+posix_shm application: SIGKILL client isolation, 1000 matches, shutdown <=5 seconds OK
+clean-ipc: 소유 자원 회수 완료
+Cleanup: unrelated regular file preserved OK
+Artifacts: /tmp/ipcff-clean.JgWiFp
+
+===== pipe-integration.log =====
+make test-pipe 
+timeout 20s ./tests/test_pipe_protocol
+pipe: partial-header EOF, spoofed ID isolation, EPIPE, cancellation OK
+timeout 600s bash tests/test_pipe.sh
+clean-ipc: 소유 자원 회수 완료
+pipe: 부분 전송(1MiB)·8클라·다중 필터·개선 동등성·상대 사망/회수 OK; /tmp/ipcff-pipe-test.6cXpOE
+
+===== fifo-app.log =====
+make test-app IPC=fifo 
+timeout 20s ./tests/test_client_protocol fifo
+Client: fifo reverse responses accepted; duplicate, unsent seq, timestamp rejected OK
+timeout 600s bash tests/test_app.sh fifo
+test_images: OK (256x256 입력·GRAY 출력 전 바이트 비교)
+Application: GRAY 100장·CSV seq 전건·통계·BYE 종료 OK
+test_app_protocol: OK (잘못된 요청 8종 MSG_ERR·후속 정상 응답·BYE)
+Application: 2클라 × 1000장·GRAY/EDGE·depth=4 seq 전건 OK
+Application: 서버 5/클라 4 스레드·서버 SIGINT=0·클라 오류 1줄·정리 OK
+Application: 클라 SIGINT=0·서버 재시작·정리 OK
+Artifacts: /tmp/ipcff-app.UelhUc
+
+===== mq-app.log =====
+make test-app IPC=sysv_mq 
+timeout 20s ./tests/test_client_protocol sysv_mq
+Client: sysv_mq reverse responses accepted; duplicate, unsent seq, timestamp rejected OK
+timeout 600s bash tests/test_app.sh sysv_mq
+test_images: OK (256x256 입력·GRAY 출력 전 바이트 비교)
+Application: GRAY 100장·CSV seq 전건·통계·BYE 종료 OK
+test_app_protocol: OK (잘못된 요청 8종 MSG_ERR·후속 정상 응답·BYE)
+Application: 2클라 × 1000장·GRAY/EDGE·depth=4 seq 전건 OK
+Application: 서버 5/클라 4 스레드·서버 SIGINT=0·클라 오류 1줄·정리 OK
+Application: 클라 SIGINT=0·서버 재시작·정리 OK
+Artifacts: /tmp/ipcff-app.dnA4NG
+
+===== sysv-shm-app-d1.log =====
+env DEPTH=1 make test-app IPC=sysv_shm 
+timeout 20s ./tests/test_client_protocol sysv_shm
+Client: sysv_shm reverse responses accepted; duplicate, unsent seq, timestamp rejected OK
+timeout 600s bash tests/test_app.sh sysv_shm
+test_images: OK (256x256 입력·GRAY 출력 전 바이트 비교)
+Application: GRAY 100장·CSV seq 전건·통계·BYE 종료 OK
+test_app_protocol: OK (잘못된 요청 8종 MSG_ERR·후속 정상 응답·BYE)
+Application: 2클라 × 1000장·GRAY/EDGE·depth=1 seq 전건 OK
+Application: 서버 5/클라 4 스레드·서버 SIGINT=0·클라 오류 1줄·정리 OK
+Application: 클라 SIGINT=0·서버 재시작·정리 OK
+Artifacts: /tmp/ipcff-app.pli3ex
+
+===== sysv-shm-app-d4.log =====
+env DEPTH=4 make test-app IPC=sysv_shm 
+timeout 20s ./tests/test_client_protocol sysv_shm
+Client: sysv_shm reverse responses accepted; duplicate, unsent seq, timestamp rejected OK
+timeout 600s bash tests/test_app.sh sysv_shm
+test_images: OK (256x256 입력·GRAY 출력 전 바이트 비교)
+Application: GRAY 100장·CSV seq 전건·통계·BYE 종료 OK
+test_app_protocol: OK (잘못된 요청 8종 MSG_ERR·후속 정상 응답·BYE)
+Application: 2클라 × 1000장·GRAY/EDGE·depth=4 seq 전건 OK
+Application: 서버 5/클라 4 스레드·서버 SIGINT=0·클라 오류 1줄·정리 OK
+Application: 클라 SIGINT=0·서버 재시작·정리 OK
+Artifacts: /tmp/ipcff-app.uGXobA
+
+===== sysv-shm-app-d16.log =====
+env DEPTH=16 make test-app IPC=sysv_shm 
+timeout 20s ./tests/test_client_protocol sysv_shm
+Client: sysv_shm reverse responses accepted; duplicate, unsent seq, timestamp rejected OK
+timeout 600s bash tests/test_app.sh sysv_shm
+test_images: OK (256x256 입력·GRAY 출력 전 바이트 비교)
+Application: GRAY 100장·CSV seq 전건·통계·BYE 종료 OK
+test_app_protocol: OK (잘못된 요청 8종 MSG_ERR·후속 정상 응답·BYE)
+Application: 2클라 × 1000장·GRAY/EDGE·depth=16 seq 전건 OK
+Application: 서버 5/클라 4 스레드·서버 SIGINT=0·클라 오류 1줄·정리 OK
+Application: 클라 SIGINT=0·서버 재시작·정리 OK
+Artifacts: /tmp/ipcff-app.dj6bRV
+
+===== posix-app.log =====
+make test-app IPC=posix_shm 
+timeout 20s ./tests/test_client_protocol posix_shm
+Client: posix_shm reverse responses accepted; duplicate, unsent seq, timestamp rejected OK
+timeout 600s bash tests/test_app.sh posix_shm
+test_images: OK (256x256 입력·GRAY 출력 전 바이트 비교)
+Application: GRAY 100장·CSV seq 전건·통계·BYE 종료 OK
+test_app_protocol: OK (잘못된 요청 8종 MSG_ERR·후속 정상 응답·BYE)
+Application: 2클라 × 1000장·GRAY/EDGE·depth=4 seq 전건 OK
+Application: 서버 5/클라 4 스레드·서버 SIGINT=0·클라 오류 1줄·정리 OK
+Application: 클라 SIGINT=0·서버 재시작·정리 OK
+Artifacts: /tmp/ipcff-app.1R9Ogq
+
+===== bench-smoke.log =====
+make test-bench 
+timeout 120s bash tests/test_bench.sh
+aggregate: nearest-rank·전체 시간 경계·자원 합계·중복 seq 거절 OK
+fixture: /tmp/tmp.gTTl0viGws
+완료 basic-pipe-64-8-gray-1-1-smoke
+완료 s1-pipe-32-2-gray-4-1-smoke
+완료 improvement-pipe-32-2-gray-4-1-inplace
+완료 basic-sysv_mq-64-8-gray-1-1-smoke
+완료 s1-sysv_mq-32-2-gray-4-1-smoke
+완료 improvement-sysv_mq-32-2-gray-4-1-inplace
+완료 basic-sysv_shm-64-8-gray-1-1-smoke
+완료 s1-sysv_shm-32-2-gray-4-1-smoke
+완료 improvement-sysv_shm-32-2-gray-4-1-inplace
+결과: /tmp/ipcff-bench-test.sLaNqY/smoke
+bench: 3IPC·기초 8클라·워밍업 제외·자원 sidecar·개선 옵션 OK; /tmp/ipcff-bench-test.sLaNqY
+
+===== docs.log =====
+python3 .github/scripts/check_docs.py 
+OK /home/student/cestudent/22/ce22b035/ipcff-restart-fix.C8B8bM (0건)
+
+===== inputs-check.log =====
+sha256sum -c logs/inputs.sha256 
+bench/aggregate.c: OK
+bench/check_results.sh: OK
+bench/demo.sh: OK
+bench/freeze_prediction.sh: OK
+bench/inspect.c: OK
+bench/package.sh: OK
+bench/plot.py: OK
+bench/run_bench.sh: OK
+src/clean_ipc.c: OK
+src/client.c: OK
+src/common/app.c: OK
+src/common/app.h: OK
+src/common/bqueue.c: OK
+src/common/bqueue.h: OK
+src/common/filter.c: OK
+src/common/filter.h: OK
+src/common/ppm.c: OK
+src/common/ppm.h: OK
+src/common/proto.c: OK
+src/common/proto.h: OK
+src/common/resource.c: OK
+src/common/resource.h: OK
+src/common/timer.c: OK
+src/common/timer.h: OK
+src/ipc/ipc.c: OK
+src/ipc/ipc.h: OK
+src/ipc/ipc_fifo.c: OK
+src/ipc/ipc_meta.c: OK
+src/ipc/ipc_meta.h: OK
+src/ipc/ipc_names.h: OK
+src/ipc/ipc_owned.c: OK
+src/ipc/ipc_owned.h: OK
+src/ipc/ipc_pipe.c: OK
+src/ipc/ipc_posix_shm.c: OK
+src/ipc/ipc_posix_shm.h: OK
+src/ipc/ipc_sysv_mq.c: OK
+src/ipc/ipc_sysv_mq.h: OK
+src/ipc/ipc_sysv_shm.c: OK
+src/ipc/ipc_sysv_shm.h: OK
+src/ipc/ipc_util.h: OK
+src/ipc/mq_internal.h: OK
+src/ipc/mq_lifecycle.c: OK
+src/ipc/pshm_owned.c: OK
+src/ipc/pshm_owned.h: OK
+src/ipc/shm_ring.c: OK
+src/ipc/shm_ring.h: OK
+src/pipe_run.c: OK
+src/server.c: OK
+tests/test_aggregate.sh: OK
+tests/test_app.sh: OK
+tests/test_app_options.c: OK
+tests/test_app_protocol.c: OK
+tests/test_bench.sh: OK
+tests/test_bqueue.c: OK
+tests/test_clean.sh: OK
+tests/test_client_protocol.c: OK
+tests/test_fifo_faults.c: OK
+tests/test_filter.c: OK
+tests/test_images.c: OK
+tests/test_ipc_loopback.c: OK
+tests/test_ipc_util.c: OK
+tests/test_mq.c: OK
+tests/test_pipe.sh: OK
+tests/test_pipe_protocol.c: OK
+tests/test_posix.c: OK
+tests/test_ppm.c: OK
+tests/test_proto.c: OK
+tests/test_shm.c: OK
+tests/test_team.c: OK
+tests/test_timer.c: OK
+
+===== ipcs-after.txt =====
+
+------ Message Queues --------
+key        msqid      owner      perms      used-bytes   messages    
+
+------ Shared Memory Segments --------
+key        shmid      owner      perms      bytes      nattch     status      
+
+------ Semaphore Arrays --------
+key        semid      owner      perms      nsems     
+
+
+===== processes-after.txt =====
+Thu Nov 12 15:32:18 UTC 2026

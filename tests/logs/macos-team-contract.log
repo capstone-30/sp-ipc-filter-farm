@@ -1,0 +1,20 @@
+Validation date: 2026-11-01 (Asia/Seoul)
+Host: Darwin
+
+$ cc -std=c11 -D_POSIX_C_SOURCE=200809L -Wall -Wextra -Werror -O2 -fsyntax-only common/proto.c common/bqueue.c common/ppm.c common/filter.c common/timer.c ipc/ipc_names.h
+Exit: 0, no diagnostics. Common modules and team key header only.
+
+$ bash -n tests/test_app.sh tests/test_clean.sh
+Exit: 0, no diagnostics.
+
+$ git diff --check
+Exit: 0, no diagnostics.
+
+$ make -n test-team
+Exit: 0. Generated compile/link and timeout commands; did not execute them.
+
+$ docker info --format '{{.OSType}}'
+Exit: 1. Docker daemon socket /Users/jeong/.docker/run/docker.sock absent.
+
+Linux build, test-team, backend regression and application tests were not run.
+This is not IPC correctness or performance evidence.

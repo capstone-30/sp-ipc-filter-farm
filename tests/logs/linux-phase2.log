@@ -1,0 +1,12 @@
+2026-09-11: Linux 6.8.0-139-generic / GCC 13.3.0
+make -B all check-headers test: exit 0 (-Wall -Wextra -Werror, -lpthread)
+make test-app: exit 0
+timeout 120s bash tests/test_app.sh
+test_images: OK (256x256 입력·GRAY 출력 전 바이트 비교)
+Phase 2: GRAY 100장·CSV seq 전건·통계·BYE 종료 OK
+test_app_protocol: OK (잘못된 요청 8종 MSG_ERR·후속 정상 응답·BYE)
+Phase 2: 2클라 × 1000장·GRAY/EDGE·depth=4 seq 전건 OK
+Phase 2: 서버 5/클라 4 스레드·서버 SIGINT=0·클라 오류 1줄·정리 OK
+Phase 2: 클라 SIGINT=0·서버 재시작·정리 OK
+Artifacts: /tmp/ipcff-app.0gCARs
+

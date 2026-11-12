@@ -1,0 +1,45 @@
+# macOS
+.DS_Store
+._*
+
+# Build
+*.o
+*.dSYM/
+/server
+/client
+/clean_ipc
+/basic_clean_ipc
+/basic_server
+/basic_client
+/pipe_run
+/build/
+/bench/aggregate
+/bench/inspect
+/bench/__pycache__/
+
+# Local measurement evidence and generated artifacts
+/bench/results/
+
+# Test executables
+/tests/test_proto
+/tests/test_bqueue
+/tests/test_ppm
+/tests/test_filter
+/tests/test_timer
+/tests/test_ipc_util
+/tests/test_app_options
+/tests/test_basic_options
+/tests/test_images
+/tests/test_ipc_loopback
+/tests/test_fifo_faults
+/tests/test_app_protocol
+/tests/test_mq
+/tests/test_shm
+/tests/test_posix
+/tests/test_team
+/tests/test_client_protocol
+/tests/test_pipe_protocol
+
+# Generated demo images
+/client-[1-4]-input.ppm
+/client-[1-4]-output.ppm

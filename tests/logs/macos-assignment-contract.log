@@ -1,0 +1,53 @@
+Validation time: 2026-11-04 07:45:06 UTC
+Darwin
+Apple clang version 21.0.0 (clang-2100.4.1.1)
+Target: arm64-apple-darwin27.2.0
+Thread model: posix
+InstalledDir: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin
+Common modules: C11/POSIX, -Wall -Wextra -Werror, -O2
+test_proto: OK (msg_hdr_t=48B)
+test_bqueue: OK (1000000건, 합계 125000500000)
+test_ppm: OK (37x23 왕복·잘못된 입력 거절·픽셀 보존)
+test_filter: OK (gray/blur/edge 손계산 일치)
+test_timer: OK (nearest-rank·평균·처리량·표본 확장)
+test_proto: OK (msg_hdr_t=48B)
+aggregate: nearest-rank·전체 시간 경계·자원 합계·중복 seq 거절 OK
+fixture: /var/folders/n8/8ml7nwbd6hx8sy9h7w1px1ww0000gn/T/tmp.A5lnDCKa08
+Portable syntax only: pipe launcher, new backend/meta/ring and protocol test (-D_DARWIN_C_SOURCE for mkdtemp declaration)
+Server syntax only: Darwin sem_init/sem_destroy deprecation diagnostic suppressed; no link or run
+Bash syntax and make all + six individual version dry-runs: PASS (no Linux compile/link)
+git diff --check: PASS
+Plot synthetic fixture: 18 PNGs generated with matplotlib 3.11.2 in /private/tmp/ipcff-plot-fixture. Not measured data.
+PPT draft: 15 slides, package/layout/font/import validation passed; rendered slides inspected individually. Not checked in PowerPoint.
+Not run: Linux whole build, client/app Linux-only APIs, IPC execution/regressions, warmup/resource integration, benchmarks, strace and recording.
+Docker: skipped per user instruction; no Docker-based build/test/measurement performed.
+Archive preview extraction: readme.txt, new pipe source, measurement script and draft PPT found; six individual build + all dry-run passed in extracted directory. No Linux build/run.
+Changed document relative file links: PASS.
+Linux-only benchmark guard and final package missing-evidence guard: PASS.
+
+Simplification validation: 2026-11-04 08:02:17 UTC
+Scope: FIFO open/receive/close, app payload validation, client total count, launcher paths, individual Make rules.
+PASS: test_proto, test_bqueue (1,000,000 jobs), test_ppm, test_filter (including in-place gray), test_timer, test_ipc_util.
+PASS: test_app_options in image/4-slot and BASIC_BENCH/8-slot builds: count+warmup uint32 boundary, duplicate/zero count rejection, image/basic payload and filter validation.
+Native app-options build cannot compile sigtimedwait on Darwin. Local validation supplied declarations for Linux-only APIs and used -Wl,-dead_strip to omit unused functions; those APIs were not implemented or exercised. Repository sources were not patched for Darwin.
+PASS: aggregate fixture (nearest-rank, time boundaries, summed resources, duplicate seq rejection).
+PASS: changed C syntax for image and BASIC_BENCH/8-slot variants; Darwin-only missing declarations supplied and semaphore deprecation warnings suppressed. No Linux link/run evidence.
+PASS: make check-headers; all bench/tests Bash syntax; make all dry-run; six individual version build command sequences identical before/after simplification; git diff --check.
+Not run: Linux build, FIFO/pipe/MQ/SHM integration or failure tests, warmup/resource integration, performance measurements. Docker not used.
+Refactoring validation: 2026-11-04 08:24:54 UTC
+Scope: numeric CLI option table, shared application build prerequisites, persistent image/basic option test targets.
+PASS: expanded option tests against both original and refactored app.c, each in image/4-slot and BASIC_BENCH/8-slot builds; numeric boundaries, malformed/empty/overflow inputs, parsed values, duplicates, role restrictions and existing payload validation.
+PASS: make-built tests/test_app_options and tests/test_basic_options with -Wall -Wextra -Werror; on Darwin supplied only the sigtimedwait declaration via an external temporary header and -Wl,-dead_strip. No Linux APIs or IPC were exercised.
+PASS: test_proto, test_bqueue (1,000,000 jobs), test_ppm, test_filter, test_timer, test_ipc_util; make check-headers.
+PASS: forced dry-run of all plus six individual version targets against original Makefile. Existing commands identical; only the new tests/test_basic_options compile command was added.
+PASS: git diff --check.
+Not run: Linux whole build, IPC integration/failure tests, performance measurements. Docker not used.
+
+Folder layout validation: 2026-11-04 08:29:27 UTC
+Scope: application/common/IPC sources moved under src/; original logs moved under tests/logs/. Existing log entries retained.
+PASS: make check-headers; make-built and executed test_proto, test_bqueue (1,000,000 jobs), test_ppm, test_filter, test_timer, test_ipc_util with LDLIBS=-lpthread on Darwin (Linux librt unavailable).
+PASS: aggregate fixture; Bash syntax for all bench/tests scripts; Markdown relative file targets and local quoted include targets.
+PASS: forced dry-run of all plus six individual version targets exactly matches pre-move commands after source path and whitespace normalization.
+PASS: draft package built in an isolated temporary source copy; archive contains src/ and tests/logs/ paths; extracted all plus six individual version dry-runs pass. Existing submission archive not overwritten.
+PASS: git diff --check.
+Not run: Linux whole build, IPC integration/failure tests or performance measurements. Docker not used.

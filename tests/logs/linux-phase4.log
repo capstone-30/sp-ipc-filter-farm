@@ -1,0 +1,49 @@
+Phase 4 functional validation — 2026-09-12
+Host: computer.tukorea.ac.kr, /tmp/ipcff-build.g4rH7E
+Environment: Linux / school shared Ubuntu host. No performance benchmark.
+Status: PASS — Phase 4 implementation and required Linux validation complete.
+
+Verified command: make -B all check-headers test
+Result: exit 0, -std=c11 -Wall -Wextra -Werror -O2.
+Common tests: proto, bqueue (1,000,000 items), ppm, filter, timer PASS.
+FIFO / sysv_mq / sysv_shm loopback: 12KB / 512KB / 12MB PASS, residual paths 0.
+FIFO fault regression PASS.
+
+Verified command: make test-shm (initial test version)
+SHM: 2 clients x 1000 reverse responses, depth=1, odd stride OK
+SHM: 2 clients x 1000 reverse responses, depth=4, odd stride OK
+SHM: 2 clients x 1000 reverse responses, depth=16, odd stride OK
+SHM: killed token holder isolated, other ID 1000 matches, stop and resource removal OK
+Cleanup: fifo / sysv_mq / sysv_shm active refusal, SIGKILL cleanup, repeated cleanup, restart OK
+SHM application: SIGKILL client isolation, 1000 matches, shutdown <=5 seconds OK
+Cleanup: unrelated regular file preserved OK
+Artifacts: /tmp/ipcff-clean.SUdosZ
+
+Verified command: make test-mq
+Unrecorded queue preservation / partial creation cleanup PASS.
+Interleaved seq / reverse chunks / 11 invalid chunk cases / W bound / ID isolation PASS.
+Server SIGKILL / recorded restart / no queue or file residue PASS.
+Actual 30-second stalled assembly retirement under other-ID traffic PASS.
+
+Verified commands: DEPTH=1/4/16 make test-app IPC=sysv_shm (each exit 0)
+Each depth: GRAY 256x256 100 frames, input/output bytes, full CSV seq, statistics, BYE PASS.
+Each depth: 8 invalid application requests MSG_ERR, subsequent valid response and BYE PASS.
+Each depth: GRAY/EDGE 512x512, 2 clients x 1000 frames, all seq matched PASS.
+Each depth: BLUR depth16, bad CLI rejection PASS.
+Each depth: server 5 threads / client 4 threads, both SIGINT paths, restart, cleanup PASS.
+Artifacts depth1: /tmp/ipcff-app.uj95a5
+Artifacts depth4: /tmp/ipcff-app.YqLcuV
+Artifacts depth16: /tmp/ipcff-app.OyQ2Yj
+
+Final command after SSH reconnection: make test-shm (exit 0)
+Recompiled tests/test_shm and clean_ipc with -Wall -Wextra -Werror.
+SHM: 2 clients x 1000 reverse responses, depth=1/4/16, odd stride OK
+SHM: killed token holder isolated, other ID 1000 matches, stop and resource removal OK
+SHM: server death <=5 seconds, live client prevents cleanup, kernel IDs removed OK
+SHM: unrecorded semaphore preserved and partial SHM creation removed OK
+Cleanup: fifo / sysv_mq / sysv_shm active refusal, SIGKILL cleanup, repeated cleanup, restart OK
+Cleanup: mixed unknown record preserves known resources OK
+SHM application: SIGKILL client isolation, 1000 matches, shutdown <=5 seconds OK
+Cleanup: unrelated regular file preserved OK
+Expected negative-test diagnostic: clean-ipc: Resource temporarily unavailable
+Final artifacts: /tmp/ipcff-clean.zC43G2
