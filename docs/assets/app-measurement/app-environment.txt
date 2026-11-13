@@ -1,0 +1,112 @@
+recorded_at=2026-11-13T02:08:28Z
+phase=app count=1000 warmup=100 repeats=3 workers=2 team=1
+SMOKE=no (smoke 자료는 과제 성능 결과로 사용하지 않음)
+Linux tukorea-ce 6.8.0-147-generic #147-Ubuntu SMP PREEMPT_DYNAMIC Thu Sep 24 11:33:16 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux
+PRETTY_NAME="Ubuntu 24.04.5 LTS"
+NAME="Ubuntu"
+VERSION_ID="24.04"
+VERSION="24.04.5 LTS (Noble Numbat)"
+VERSION_CODENAME=noble
+ID=ubuntu
+ID_LIKE=debian
+HOME_URL="https://www.ubuntu.com/"
+SUPPORT_URL="https://help.ubuntu.com/"
+BUG_REPORT_URL="https://bugs.launchpad.net/ubuntu/"
+PRIVACY_POLICY_URL="https://www.ubuntu.com/legal/terms-and-policies/privacy-policy"
+UBUNTU_CODENAME=noble
+LOGO=ubuntu-logo
+Architecture:                            x86_64
+CPU op-mode(s):                          32-bit, 64-bit
+Address sizes:                           46 bits physical, 48 bits virtual
+Byte Order:                              Little Endian
+CPU(s):                                  16
+On-line CPU(s) list:                     0-15
+Vendor ID:                               GenuineIntel
+Model name:                              Intel(R) Xeon(R) Bronze 3106 CPU @ 1.70GHz
+CPU family:                              6
+Model:                                   85
+Thread(s) per core:                      1
+Core(s) per socket:                      8
+Socket(s):                               2
+Stepping:                                4
+CPU(s) scaling MHz:                      59%
+CPU max MHz:                             1700.0000
+CPU min MHz:                             800.0000
+BogoMIPS:                                3400.00
+Flags:                                   fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb cat_l3 cdp_l3 pti intel_ppin ssbd mba ibrs ibpb stibp tpr_shadow flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 hle avx2 smep bmi2 erms invpcid rtm cqm mpx rdt_a avx512f avx512dq rdseed adx smap clflushopt clwb intel_pt avx512cd avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local dtherm arat pln pts hwp hwp_act_window hwp_pkg_req vnmi pku ospke md_clear flush_l1d arch_capabilities ibpb_exit_to_user
+Virtualization:                          VT-x
+L1d cache:                               512 KiB (16 instances)
+L1i cache:                               512 KiB (16 instances)
+L2 cache:                                16 MiB (16 instances)
+L3 cache:                                22 MiB (2 instances)
+NUMA node(s):                            2
+NUMA node0 CPU(s):                       0-3,8-11
+NUMA node1 CPU(s):                       4-7,12-15
+Vulnerability Gather data sampling:      Mitigation; Microcode
+Vulnerability Indirect target selection: Not affected
+Vulnerability Itlb multihit:             KVM: Mitigation: VMX disabled
+Vulnerability L1tf:                      Mitigation; PTE Inversion; VMX conditional cache flushes, SMT disabled
+Vulnerability Mds:                       Mitigation; Clear CPU buffers; SMT disabled
+Vulnerability Meltdown:                  Mitigation; PTI
+Vulnerability Mmio stale data:           Mitigation; Clear CPU buffers; SMT disabled
+Vulnerability Reg file data sampling:    Not affected
+Vulnerability Retbleed:                  Mitigation; IBRS
+Vulnerability Spec rstack overflow:      Not affected
+Vulnerability Spec store bypass:         Mitigation; Speculative Store Bypass disabled via prctl
+Vulnerability Spectre v1:                Mitigation; usercopy/swapgs barriers and __user pointer sanitization
+Vulnerability Spectre v2:                Mitigation; IBRS; IBPB conditional; STIBP disabled; RSB filling; PBRSB-eIBRS Not affected; BHI Not affected
+Vulnerability Srbds:                     Not affected
+Vulnerability Tsa:                       Not affected
+Vulnerability Tsx async abort:           Mitigation; Clear CPU buffers; SMT disabled
+Vulnerability Vmscape:                   Mitigation; IBPB before exit to userspace
+               total        used        free      shared  buff/cache   available
+Mem:        65454204     7561012    53051316       27144     5533164    57893192
+Swap:        2097148           0     2097148
+cc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0
+Copyright (C) 2023 Free Software Foundation, Inc.
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+none
+pid 838476's current affinity list: 0-15
+/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor=powersave
+/sys/devices/system/cpu/cpu1/cpufreq/scaling_governor=powersave
+/sys/devices/system/cpu/cpu10/cpufreq/scaling_governor=powersave
+/sys/devices/system/cpu/cpu11/cpufreq/scaling_governor=powersave
+/sys/devices/system/cpu/cpu12/cpufreq/scaling_governor=powersave
+/sys/devices/system/cpu/cpu13/cpufreq/scaling_governor=powersave
+/sys/devices/system/cpu/cpu14/cpufreq/scaling_governor=powersave
+/sys/devices/system/cpu/cpu15/cpufreq/scaling_governor=powersave
+/sys/devices/system/cpu/cpu2/cpufreq/scaling_governor=powersave
+/sys/devices/system/cpu/cpu3/cpufreq/scaling_governor=powersave
+/sys/devices/system/cpu/cpu4/cpufreq/scaling_governor=powersave
+/sys/devices/system/cpu/cpu5/cpufreq/scaling_governor=powersave
+/sys/devices/system/cpu/cpu6/cpufreq/scaling_governor=powersave
+/sys/devices/system/cpu/cpu7/cpufreq/scaling_governor=powersave
+/sys/devices/system/cpu/cpu8/cpufreq/scaling_governor=powersave
+/sys/devices/system/cpu/cpu9/cpufreq/scaling_governor=powersave
+kernel.msgmax = 8192
+kernel.msgmnb = 16384
+kernel.msgmni = 32000
+kernel.shmmax = 18446744073692774399
+kernel.shmall = 18446744073692774399
+kernel.sem = 32000	1024000000	500	32000
+Filesystem     1K-blocks  Used Available Use% Mounted on
+tmpfs           32727100     0  32727100   0% /dev/shm
+
+------ Message Queues --------
+key        msqid      owner      perms      used-bytes   messages    
+
+------ Shared Memory Segments --------
+key        shmid      owner      perms      bytes      nattch     status      
+
+------ Semaphore Arrays --------
+key        semid      owner      perms      nsems     
+
+wait: FIFO/pipe poll<=100ms; SysV retry=1ms; workers fixed; affinity inherited
+CPU: RSS start -> getrusage start; getrusage end -> RSS end. RSS is boundary sample, sums may double-count shared pages.
+basic overhead: each direction payload B + 48B control; MQ adds 20B/chunk plus sizeof(long) mtype (msgsz excludes mtype).
+MB/s counts one-way payload, not header or response bytes. CPU sums server+clients; individual sidecars retained.
+S5_MSGMNB unset; only default measured.
+S5_MSGMNB unset; only default measured.
+S5_MSGMNB unset; only default measured.

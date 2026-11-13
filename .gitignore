@@ -43,3 +43,15 @@
 # Generated demo images
 /client-[1-4]-input.ppm
 /client-[1-4]-output.ppm
+
+# LaTeX build artifacts
+/docs/paper/*.aux
+/docs/paper/*.bbl
+/docs/paper/*.blg
+/docs/paper/*.log
+/docs/paper/*.out
+/docs/paper/*.toc
+/docs/paper/*.pdf
+/docs/paper/*.fdb_latexmk
+/docs/paper/*.fls
+/docs/paper/*.synctex.gz

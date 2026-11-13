@@ -4,7 +4,7 @@
 
 Linux IPC 기초 성능을 측정하고, 이미지 필터 응용에 적합한 IPC를 예측·검증·개선하는 프로젝트다.
 
-필수 비교(`pipe`, `sysv_mq`, `sysv_shm`), 선택 확장(`fifo`, `posix_shm`), 기초 벤치와 측정 도구를 포함한다. **Linux 기초 측정 산출물·빌드·단위·응용 통합·장애·정리 검사는 통과했다. 응용 정식 측정은 아직 실행하지 않았다.** 상세는 [검증 판정](docs/04-test/01-verification.md#현재-검증-판정)과 [범위](docs/01-func/01-requirements.md#범위)를 따른다.
+필수 비교(`pipe`, `sysv_mq`, `sysv_shm`), 선택 확장(`fifo`, `posix_shm`), 기초 벤치와 측정 도구를 포함한다. **Linux 기초·응용 정식 측정과 개선 비교의 산출물, 빌드·단위·응용 통합·장애·정리 검사는 통과했다. S5 큐 용량 확대와 별도 공정성 추적은 미검증이다.** 상세는 [검증 판정](docs/04-test/01-verification.md#현재-검증-판정)과 [범위](docs/01-func/01-requirements.md#범위)를 따른다.
 
 ## 기술 스택
 
@@ -130,8 +130,10 @@ python3 tests/test_check_results.py
 - [최종보고서 서식 원문](docs/final-report-template.md): 제공 DOCX 목차·안내·빈 표 보존본.
 - [보고서 초안](docs/report.md): 서식 순서의 초안과 미측정 항목 구분.
 - [기초 측정 결과](docs/basic-measurement.md): 1단계 실측·그래프·무결성 검증과 해석의 한계.
+- [응용 측정과 개선 비교](docs/app-measurement.md): S1~S5 기본 용량·버퍼 재사용 실측, 예측 대조와 IPC 선택 근거.
 - [IPC 구현·성능 예측](docs/ipc-prediction.md): 구현 전 예측 원문과 구현 후 보완 및 검증 계획.
 - [AI 오류 검증 기록](docs/ai-record.md): 확인·정정한 AI 코드 오류와 검증 범위.
+- [IEEE 논문 템플릿](docs/paper/README.md): `IEEEtran` 기반 학회 논문 LaTeX 템플릿.
 - [발표자료 초안](submission/presentation-draft.pptx): 별첨 순서의 PPT 초안.
 
 ### 문서 분류 기준

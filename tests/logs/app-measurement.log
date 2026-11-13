@@ -1,0 +1,12 @@
+검증일: 2026-11-13 (Asia/Seoul)
+대상: 원격에서 복사한 app-run, improvement-run. 성능 재측정은 하지 않음.
+app-run: 원본 SHA256SUMS 2026개 일치
+app-run: 실행 156회 / 측정 샘플 219000건; seq·ID·payload·matched 전건 정상; RTT/처리량/CPU/RSS 재계산 일치; 3회 중앙값 일치; stderr 및 ipcs-after 객체 비어 있음
+app-run: source.tar SHA-256=57ce280f5a392eaa68f0db925fad16505ea4421e310ea5e00264bd75c161a1f3; 현재 소스·Makefile·측정/집계/그래프/제출검사 도구 차이=[]
+app-run: 파생 파일 포함 보존 체크섬 2033개: bench/results/app-run-preservation.SHA256SUMS
+improvement-run: 원본 SHA256SUMS 279개 일치
+improvement-run: 실행 18회 / 측정 샘플 36000건; seq·ID·payload·matched 전건 정상; RTT/처리량/CPU/RSS 재계산 일치; 3회 중앙값 일치; stderr 및 ipcs-after 객체 비어 있음
+improvement-run: source.tar SHA-256=57ce280f5a392eaa68f0db925fad16505ea4421e310ea5e00264bd75c161a1f3; 현재 소스·Makefile·측정/집계/그래프/제출검사 도구 차이=[]
+improvement-run: 파생 파일 포함 보존 체크섬 283개: bench/results/improvement-run-preservation.SHA256SUMS
+bash bench/check_results.sh bench/results/basic-run bench/results/app-run bench/results/improvement-run: PASS (원본 해시·최소 실험 조합·그래프 존재)
+미실행: 성능 재측정, Linux 빌드·회귀, S5 확대 비교, 데모·strace 분석, 로컬 그래프 재생성(matplotlib 없음).
