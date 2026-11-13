@@ -24,7 +24,7 @@ matrix() {
         for(i=1;i<=3;i++)for(j=1;j<=n;j++)if(!seen[b[i],v[j]])exit 1
     }' "$file"
 }
-matrix "$app/s1.csv" 3 '256 512 1024 2048'
+matrix "$app/s1.csv" 3 '64 80 96 104 256 512 1024 2048'
 matrix "$app/s2.csv" 4 '1 2 4'
 matrix "$app/s3.csv" 5 'gray blur edge'
 matrix "$app/s4.csv" 6 '1 4 16'

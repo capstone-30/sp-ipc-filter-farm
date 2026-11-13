@@ -110,7 +110,7 @@ for ((repeat=1;repeat<=repeats;repeat++)); do
                 done
             done;;
         app)
-            for size in ${APP_SIZES:-256 512 1024 2048}; do run_case "$backend" s1 "$size" 1 gray 1 "$repeat" app; done
+            for size in ${APP_SIZES:-64 80 96 104 256 512 1024 2048}; do run_case "$backend" s1 "$size" 1 gray 1 "$repeat" app; done
             for clients in 1 2 4; do run_case "$backend" s2 512 "$clients" gray 1 "$repeat" app; done
             for filter in gray blur edge; do run_case "$backend" s3 512 2 "$filter" 1 "$repeat" app; done
             for depth in 1 4 16; do run_case "$backend" s4 512 1 gray "$depth" "$repeat" app; done;;

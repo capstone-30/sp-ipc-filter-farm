@@ -22,3 +22,5 @@ jobs:
         run: make -j2 all check-headers
       - name: Unit and IPC regression tests
         run: make test test-mq test-shm
+      - name: Submission result validation regression
+        run: python3 tests/test_check_results.py

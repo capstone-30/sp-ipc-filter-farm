@@ -76,7 +76,7 @@ python3 bench/plot.py bench/results/improvement-run
 
 구현 전 예측 작성·원문 보존은 [원본 과제 조건](docs/assignment.md#필수-수행-순서)을 따른다. `bench/freeze_prediction.sh`와 `PREDICTION`을 통한 보관본 첨부는 선택 사항이다.
 
-기본값은 워밍업 100회·클라당 1,000회·3반복이며, `COUNT/WARMUP/REPEATS/WORKERS/TEAM/BENCH_TIMEOUT/RESULTS` 변경 시 환경 파일에 기록된다. `BASIC_SIZES/APP_SIZES` 부분 실행은 최종 측정으로 쓰지 않는다. S5는 기본 `msgmnb`를 측정하고, `S5_MSGMNB=65536`과 `sudo` 권한이 있으면 확대 측정 후 원복한다. governor·affinity는 자동 변경하지 않는다([측정과 집계](docs/03-tech/01-architecture.md#측정과-집계)).
+기본값은 워밍업 100회·클라당 1,000회·3반복이며, `COUNT/WARMUP/REPEATS/WORKERS/TEAM/BENCH_TIMEOUT/RESULTS` 변경 시 환경 파일에 기록된다. S1의 기본 크기는 [벤치 설계](docs/03-tech/01-architecture.md#2단계-응용-측정)를 따르며 제출 검사는 작은 페이로드 구간의 누락도 거절한다. `BASIC_SIZES/APP_SIZES` 부분 실행은 최종 측정으로 쓰지 않는다. S5는 기본 `msgmnb`를 측정하고, `S5_MSGMNB=65536`과 `sudo` 권한이 있으면 확대 측정 후 원복한다. governor·affinity는 자동 변경하지 않는다([측정과 집계](docs/03-tech/01-architecture.md#측정과-집계)).
 
 `bench/results/`의 원자료·동결본·생성 산출물은 로컬에 보존하며 Git 추적에서 제외한다. 새 체크아웃에서 기존 측정을 이어가려면 별도 보존본을 해당 경로에 복원하고 체크섬을 확인한다. 기초 원자료의 서버 위치는 [기초 측정 결과](docs/basic-measurement.md#측정-조건과-근거)를 따른다.
 
@@ -117,6 +117,7 @@ DEPTH=4 make test-app IPC=sysv_shm
 DEPTH=16 make test-app IPC=sysv_shm
 make test-pipe
 make test-bench
+python3 tests/test_check_results.py
 ```
 
 `IPC`는 `fifo`, `sysv_mq`, `sysv_shm`, `posix_shm`을 지원하며, 개별 loopback은 `./tests/test_ipc_loopback <backend>`로 실행한다. 팀 검사는 1·2팀 자원이 없는 Linux 환경에서 순차 실행한다.
@@ -129,7 +130,7 @@ make test-bench
 - [최종보고서 서식 원문](docs/final-report-template.md): 제공 DOCX 목차·안내·빈 표 보존본.
 - [보고서 초안](docs/report.md): 서식 순서의 초안과 미측정 항목 구분.
 - [기초 측정 결과](docs/basic-measurement.md): 1단계 실측·그래프·무결성 검증과 해석의 한계.
-- [IPC 구현·성능 예측](docs/ipc-prediction.md): 구현·측정 전에 작성한 설계·성능 가설과 검증 계획.
+- [IPC 구현·성능 예측](docs/ipc-prediction.md): 구현 전 예측 원문과 구현 후 보완 및 검증 계획.
 - [AI 오류 검증 기록](docs/ai-record.md): 확인·정정한 AI 코드 오류와 검증 범위.
 - [발표자료 초안](submission/presentation-draft.pptx): 별첨 순서의 PPT 초안.
 
