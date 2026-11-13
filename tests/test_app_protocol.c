@@ -9,11 +9,19 @@ atomic_bool g_stop = false;
 
 int main(int argc, char **argv)
 {
-    assert(argc == 2 || argc == 3);
-    const ipc_backend_t *b = ipc_lookup(argc == 3 ? argv[2] : "fifo");
+    assert(argc >= 2 && argc <= 4);
+    const ipc_backend_t *b = ipc_lookup(argc >= 3 ? argv[2] : "fifo");
     ipc_config_t cfg = {.size=64, .depth=1, .team=1};
     ipc_channel_t *ch = b->client_open(argv[1], 1, &cfg);
     assert(ch);
+    if (argc == 4) {
+        assert(!strcmp(argv[3], "--bad-bye"));
+        msg_hdr_t bad = {.magic = IPC_MAGIC, .type = MSG_BYE, .client_id = 1,
+            .checksum = fnv1a32(NULL, 0) ^ 1u};
+        assert(b->send(ch, &bad, NULL) == 0);
+        b->close(ch);
+        return 0;
+    }
     uint8_t src[64 * 64 * 3], rx[sizeof src], expected[sizeof src];
     for (size_t i = 0; i < sizeof src; i++) src[i] = (uint8_t)i;
     msg_hdr_t request = { .magic = IPC_MAGIC, .type = MSG_REQ, .client_id = 1,
@@ -46,6 +54,7 @@ int main(int argc, char **argv)
     filter_gray(src, expected, 64, 64);
     assert(memcmp(rx, expected, sizeof rx) == 0);
     request.type = MSG_BYE; request.payload_len = 0;
+    request.checksum = fnv1a32(NULL, 0);
     assert(b->send(ch, &request, NULL) == 0);
     b->close(ch);
     puts("test_app_protocol: OK (잘못된 요청 8종 MSG_ERR·후속 정상 응답·BYE)");

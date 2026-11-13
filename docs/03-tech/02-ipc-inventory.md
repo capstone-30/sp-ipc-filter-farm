@@ -1,29 +1,21 @@
 # 사용한 IPC 목록
 
-현재 소스에 구현된 통신 백엔드 5종과 동기화 수단이다([백엔드 선택 테이블](../../src/ipc/ipc.c)). 필수 범위는 [요구사항](../01-func/01-requirements.md#범위), 실행법은 [README](../../README.md#사용-방법), 검증 상태는 [테스트 명세](../04-test/01-verification.md#현재-검증-판정)를 따른다.
+필수·선택 범위는 [요구사항](../01-func/01-requirements.md#범위), 선택 테이블은 [ipc.c](../../src/ipc/ipc.c)를 따른다.
 
 ## 데이터 통신 백엔드
 
-| IPC / 이름 | 구분 | 프로젝트 사용 방식 | 주요 API | 구현 위치 |
-| --- | --- | --- | --- | --- |
-| 익명 파이프 / `pipe` | 필수 | 실행기가 클라별 요청·응답 파이프 FD를 생성해 서버·클라에 상속하고 바이트 스트림으로 송수신한다. | `pipe`, `fork`, `execv`, `read`, `write`, `poll`, `close` | [실행기](../../src/pipe_run.c), [백엔드](../../src/ipc/ipc_pipe.c) |
-| SysV 메시지 큐 / `sysv_mq` | 필수 | 요청(`mtype=1`)·응답(`mtype=client_id`) 큐를 분리하고 최대 8,000B 청크로 분할·재조립한다. | `msgget`, `msgsnd`, `msgrcv`, `msgctl` | [송수신](../../src/ipc/ipc_sysv_mq.c), [수명](../../src/ipc/mq_lifecycle.c), [헤더](../../src/ipc/ipc_sysv_mq.h) |
-| SysV SHM + SEM / `sysv_shm` | 필수 | 클라별 요청·응답 링에 복사하고 SysV 세마포어로 빈/채워진 슬롯을 동기화한다. | `shmget`, `shmat`, `shmdt`, `shmctl`, `semget`, `semop`, `semctl` | [백엔드](../../src/ipc/ipc_sysv_shm.c), [헤더](../../src/ipc/ipc_sysv_shm.h) |
-| 이름 있는 파이프 / `fifo` | 선택 | `<key>.req.<id>`·`<key>.resp.<id>` 경로로 독립 프로세스 간 송수신한다(필수 `pipe` 대체 아님). | `mkfifo`, `open`, `read`, `write`, `poll`, `close`, `unlink` | [백엔드](../../src/ipc/ipc_fifo.c) |
-| POSIX SHM + SEM / `posix_shm` | 선택 | POSIX SHM 매핑과 공유 헤더 내 `sem_t`(`pshared=1`)로 클라별 링을 동기화한다. | `shm_open`, `ftruncate`, `posix_fallocate`, `mmap`, `munmap`, `shm_unlink`, `sem_init`, `sem_trywait`, `sem_timedwait`, `sem_post`, `sem_destroy` | [백엔드](../../src/ipc/ipc_posix_shm.c), [헤더](../../src/ipc/ipc_posix_shm.h) |
-
-두 SHM 백엔드는 [공용 링](../../src/ipc/shm_ring.c)을 공유하며 슬롯 획득→복사→게시 후 로컬 버퍼로 다시 복사한다. 식별자 규칙은 [실행 인터페이스](../01-func/01-requirements.md#실행-인터페이스)를 따른다.
-
-## 공통 프로세스 간 제어
-
-| 수단 | 용도 | 주요 API | 구현 위치 |
-| --- | --- | --- | --- |
-| 파일 레코드 잠금 | `<key>.meta`에서 서버·클라 ID 중복 점유 방지 및 상대 수명 확인([채널 수명](01-architecture.md#채널-수명)) | `fcntl(F_SETLK, F_GETLK)` | [ipc_meta.c](../../src/ipc/ipc_meta.c) |
-| 시그널 | `SIGINT` 종료 요청 및 `pipe_run` 자식 회수([종료 절차](01-architecture.md#종료와-유한-대기)) | `pthread_sigmask`, `sigtimedwait`, `kill` | [app.c](../../src/common/app.c), [pipe_run.c](../../src/pipe_run.c) |
-
-## 프로세스 내부 스레드 동기화
-
-| 수단 | 용도 | 구현 위치 |
+| IPC | 전달 방식 | 구현 |
 | --- | --- | --- |
-| pthread mutex·condvar | 서버 `jobs`/`done` 유계 큐, 클라 측정 상태·송신 대기, 백엔드 송수신 보호 | [bqueue.c](../../src/common/bqueue.c), [client.c](../../src/client.c), [ipc.h](../../src/ipc/ipc.h) |
-| 이름 없는 세마포어(`pshared=0`) | 클라 `inflight` 요청 수 및 서버 동시 작업 수 제한 | [client.c](../../src/client.c), [server.c](../../src/server.c) |
+| pipe | 실행기가 클라별 요청·응답 FD를 상속한다. | [실행기](../../src/pipe_run.c) · [백엔드](../../src/ipc/ipc_pipe.c) |
+| sysv_mq | 요청·응답 큐를 분리하고 최대 8,000B 청크를 재조립한다. | [송수신](../../src/ipc/ipc_sysv_mq.c) · [수명](../../src/ipc/mq_lifecycle.c) |
+| sysv_shm | 클라별 요청·응답 링을 SysV SEM으로 동기화한다. | [백엔드](../../src/ipc/ipc_sysv_shm.c) |
+| fifo | `<key>.req.<id>`·`<key>.resp.<id>`로 송수신한다. | [백엔드](../../src/ipc/ipc_fifo.c) |
+| posix_shm | POSIX SHM 링을 프로세스 공유 sem_t로 동기화한다. | [백엔드](../../src/ipc/ipc_posix_shm.c) |
+
+두 SHM은 [공용 링](../../src/ipc/shm_ring.c)을 사용한다. API·레이아웃 원본은 [프로토콜](03-protocol.md#데이터와-정합성)에 연결한다.
+
+## 동기화와 제어
+
+- [meta의 fcntl 잠금](../../src/ipc/ipc_meta.c)은 서버·ID 점유와 [수명](01-architecture.md#채널-수명)을 관리한다.
+- [큐의 mutex·condvar](../../src/common/bqueue.c)는 jobs/done을 보호하며, 프로세스 내부 세마포어는 동시 작업·inflight를 제한한다.
+- [시그널 처리](../../src/common/app.c)는 [유한 대기·종료 계약](01-architecture.md#종료와-유한-대기)을 따른다.

@@ -20,13 +20,19 @@ else
         [[ -s $dir/median.csv && -d $dir/graphs ]] || { echo "집계·그래프 없음: $dir" >&2; exit 1; }
     done
     bash bench/check_results.sh "$BASIC_RESULTS" "$APP_RESULTS" "$IMPROVEMENT_RESULTS"
-    echo '파일 존재 확인만 수행합니다. 내용·과거 예측 인정·발표 완료 여부는 최종 검토가 필요합니다.' >&2
+    echo '결과 검사와 파일 존재 확인을 수행합니다. 내용·과거 예측 인정·발표 완료 여부는 최종 검토가 필요합니다.' >&2
 fi
+mkdir -p submission
+archive="$root/submission/osproject_${team}${suffix}.tar"
+[[ ! -e $archive ]] || { echo "이미 존재합니다: $archive" >&2; exit 1; }
 stage=$(mktemp -d)
-files=(Makefile README.md AGENTS.md src tests bench docs)
-tar --exclude='*.o' --exclude='__pycache__' --exclude='bench/aggregate' --exclude='bench/inspect' --exclude='tests/test_proto' \
+trap 'rm -rf "$stage"' EXIT
+trap 'exit 130' INT
+trap 'exit 143' TERM
+files=(Makefile README.md AGENTS.md .github src tests bench docs)
+tar --exclude='bench/results' --exclude='*.o' --exclude='__pycache__' --exclude='bench/aggregate' --exclude='bench/inspect' --exclude='tests/test_proto' \
     --exclude='tests/test_bqueue' --exclude='tests/test_ppm' --exclude='tests/test_filter' --exclude='tests/test_timer' \
-    --exclude='tests/test_ipc_util' --exclude='tests/test_app_options' --exclude='tests/test_images' --exclude='tests/test_ipc_loopback' \
+    --exclude='tests/test_basic_options' --exclude='tests/test_ipc_util' --exclude='tests/test_app_options' --exclude='tests/test_images' --exclude='tests/test_ipc_loopback' \
     --exclude='tests/test_fifo_faults' --exclude='tests/test_app_protocol' --exclude='tests/test_client_protocol' \
     --exclude='tests/test_mq' --exclude='tests/test_shm' --exclude='tests/test_posix' --exclude='tests/test_team' --exclude='tests/test_pipe_protocol' \
     -cf - "${files[@]}" | tar -xf - -C "$stage"
@@ -40,14 +46,19 @@ if [[ -f submission/presentation-draft.pptx ]]; then
     cp submission/presentation-draft.pptx "$stage/submission/"
 fi
 if [[ -z $suffix ]]; then
-    mkdir -p "$stage/evidence"
+    mkdir -p "$stage/evidence" "$stage/submission"
+    cp "$FINAL_REPORT" "$stage/submission/report.${FINAL_REPORT##*.}"
+    cp "$PRESENTATION" "$stage/submission/presentation.${PRESENTATION##*.}"
+    cp "$VIDEO" "$stage/submission/video.${VIDEO##*.}"
     cp -R "$BASIC_RESULTS" "$stage/evidence/basic"
     cp -R "$APP_RESULTS" "$stage/evidence/app"
     cp -R "$IMPROVEMENT_RESULTS" "$stage/evidence/improvement"
     if [[ -n ${PREDICTION:-} ]]; then cp -R "$PREDICTION" "$stage/evidence/prediction"; fi
 fi
-mkdir -p submission
-archive="$root/submission/osproject_${team}${suffix}.tar"
-[[ ! -e $archive ]] || { echo "이미 존재합니다: $archive" >&2; exit 1; }
-tar -cf "$archive" -C "$stage" .
+packed=("${files[@]}" readme.txt)
+[[ ! -d $stage/submission ]] || packed+=(submission)
+[[ ! -d $stage/evidence ]] || packed+=(evidence)
+tar -cf "$stage/package.tar" -C "$stage" "${packed[@]}"
+mv -n "$stage/package.tar" "$archive"
+[[ ! -e $stage/package.tar ]] || { echo "이미 존재합니다: $archive" >&2; exit 1; }
 printf '%s\n' "$archive"

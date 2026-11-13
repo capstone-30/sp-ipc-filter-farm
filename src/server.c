@@ -48,6 +48,8 @@ static void *receive_requests(void *arg)
         if (h->type == MSG_BYE && h->payload_len == 0) {
             free(job.payload);
             release();
+            if (h->checksum != fnv1a32(NULL, 0) ||
+                (opt.clients && h->client_id > opt.clients)) { fail(EPROTO); break; }
             if (opt.count && received[h->client_id - 1] != (uint64_t)opt.count + opt.warmup) { fail(EPROTO); break; }
             bye |= 1u << (h->client_id - 1);
             if (opt.clients && (bye & ((1u << opt.clients) - 1)) == (1u << opt.clients) - 1) {

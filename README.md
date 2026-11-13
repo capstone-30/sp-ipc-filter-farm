@@ -4,17 +4,13 @@
 
 Linux IPC 기초 성능을 측정하고, 이미지 필터 응용에 적합한 IPC를 예측·검증·개선하는 프로젝트다.
 
-필수 비교(`pipe`, `sysv_mq`, `sysv_shm`), 선택 확장(`fifo`, `posix_shm`), 기초 벤치와 측정 도구를 포함한다. **Linux 기초·응용 정식 측정과 개선 비교의 산출물, 빌드·단위·응용 통합·장애·정리 검사는 통과했다. S5 큐 확대 비교와 별도 데모·공정성 추적도 검증했다. 제어 메타데이터·런타임 조회는 포함한 비용으로 공개한다.** 상세는 [검증 판정](docs/04-test/01-verification.md#현재-검증-판정)과 [범위](docs/01-func/01-requirements.md#범위)를 따른다.
+[지원 범위](docs/01-func/01-requirements.md#범위) · [검증 판정](docs/04-test/01-verification.md#현재-검증-판정)
 
 ## 기술 스택
 
 C11·POSIX, pthread, Make, Bash를 사용하며 그래프 생성에만 Python 3·matplotlib을 쓴다. 실행·측정은 Linux에서 수행한다([구현 제약](docs/03-tech/03-protocol.md#구현-제약)).
 
 ## 시작하기
-
-대상 서버 사양은 [서버 환경 기록](docs/04-test/02-server-environment.md), 디렉터리 배치는 [소스 구조](docs/03-tech/01-architecture.md#소스-구조)를 참고한다.
-
-### 빌드
 
 Ubuntu Linux에서 gcc, Make, Bash, GNU coreutils(`timeout`), util-linux, `strace`, Python 3·matplotlib이 필요하다.
 
@@ -30,13 +26,7 @@ make phase2-pipe phase2-sysv_mq phase2-sysv_shm
 
 ### 이미지 필터 실행
 
-`--filter`로 이미지 필터를 선택한다([세부 연산](docs/03-tech/03-protocol.md#데이터와-정합성)).
-
-| 옵션 | 효과 |
-| --- | --- |
-| `gray` | RGB 밝기 변환 흑백 이미지 |
-| `blur` | 3×3 평균 블러 |
-| `edge` | Sobel 경계 검출 |
+필터는 `gray|blur|edge`다([연산 정의](docs/03-tech/03-protocol.md#데이터와-정합성)).
 
 익명 `pipe`는 부모가 FD를 상속해야 하므로 `pipe_run`으로 실행한다(`--output`은 새 경로 지정).
 
@@ -76,9 +66,15 @@ python3 bench/plot.py bench/results/improvement-run
 
 구현 전 예측 작성·원문 보존은 [원본 과제 조건](docs/assignment.md#필수-수행-순서)을 따른다. `bench/freeze_prediction.sh`와 `PREDICTION`을 통한 보관본 첨부는 선택 사항이다.
 
-기본값은 워밍업 100회·클라당 1,000회·3반복이며, `COUNT/WARMUP/REPEATS/WORKERS/TEAM/BENCH_TIMEOUT/RESULTS` 변경 시 환경 파일에 기록된다. S1의 기본 크기는 [벤치 설계](docs/03-tech/01-architecture.md#2단계-응용-측정)를 따르며 제출 검사는 작은 페이로드 구간의 누락도 거절한다. `BASIC_SIZES/APP_SIZES` 부분 실행은 최종 측정으로 쓰지 않는다. S5만 재개할 때는 `S5_MSGMNB=65536 RESULTS=bench/results/s5-comparison-run bash bench/run_bench.sh s5`를 실행한다. S5는 기본 `msgmnb`를 측정하고, `S5_MSGMNB=65536`과 `sudo` 권한이 있으면 확대 측정 후 원복한다. governor·affinity는 자동 변경하지 않는다([측정과 집계](docs/03-tech/01-architecture.md#측정과-집계)).
+측정 기본값·시나리오는 [벤치 설계](docs/03-tech/01-architecture.md#벤치-설계)를 따른다. `COUNT/WARMUP/REPEATS/WORKERS/TEAM/BENCH_TIMEOUT/RESULTS` 변경은 환경 파일에 기록된다. `BASIC_SIZES/APP_SIZES` 부분 실행은 최종 측정으로 쓰지 않는다. governor·affinity는 자동 변경하지 않는다.
 
-`bench/results/`의 원자료·동결본·생성 산출물은 로컬에 보존하며 Git 추적에서 제외한다. 새 체크아웃에서 기존 측정을 이어가려면 별도 보존본을 해당 경로에 복원하고 체크섬을 확인한다. 기초 원자료의 서버 위치는 [기초 측정 결과](docs/basic-measurement.md#측정-조건과-근거)를 따른다.
+S5만 실행하려면 다음 명령을 쓴다. 기본 용량 측정 후 sudo 권한으로 확대하고 종료·실패 시 원복한다.
+
+```bash
+S5_MSGMNB=65536 RESULTS=bench/results/s5-comparison-run bash bench/run_bench.sh s5
+```
+
+기존 원자료의 보존 위치·해시는 [기초](docs/basic-measurement.md#측정-조건과-근거)·[응용](docs/app-measurement.md#측정-조건과-근거) 문서를 따른다. Git 제외 자료는 별도 보존본을 복원해 체크섬을 확인한다.
 
 ### 데모·진단·제출 패키지
 
@@ -118,24 +114,25 @@ DEPTH=16 make test-app IPC=sysv_shm
 make test-pipe
 make test-bench
 python3 tests/test_check_results.py
+python3 tests/test_package.py
 ```
 
 `IPC`는 `fifo`, `sysv_mq`, `sysv_shm`, `posix_shm`을 지원하며, 개별 loopback은 `./tests/test_ipc_loopback <backend>`로 실행한다. 팀 검사는 1·2팀 자원이 없는 Linux 환경에서 순차 실행한다.
 
 ## 관련 문서
 
-- [작업 지침](AGENTS.md): 작업 순서와 문서 관리 규칙.
-- [과제 요약](docs/assignment.md): 일정·필수 조건·평가·제출 형식.
-- [과제 안내문 원문](docs/assignment-guide.md): 제공 DOCX 변환본.
-- [최종보고서 서식 원문](docs/final-report-template.md): 제공 DOCX 목차·안내·빈 표 보존본.
-- [보고서 초안](docs/report.md): 서식 순서의 초안과 미측정 항목 구분.
-- [기초 측정 결과](docs/basic-measurement.md): 1단계 실측·그래프·무결성 검증과 해석의 한계.
-- [응용 측정과 개선 비교](docs/app-measurement.md): S1~S5·큐 확대·버퍼 재사용 실측, 예측 대조와 IPC 선택 근거.
-- [데모·시스템 콜·공정성 분석](docs/diagnostics-measurement.md): 필수 3종 진단·이미지 검증, R3 출처와 제어 I/O 해석.
-- [IPC 구현·성능 예측](docs/ipc-prediction.md): 구현 전 예측 원문과 구현 후 보완 및 검증 계획.
-- [AI 오류 검증 기록](docs/ai-record.md): 확인·정정한 AI 코드 오류와 검증 범위.
-- [IEEE 논문 템플릿](docs/paper/README.md): `IEEEtran` 기반 학회 논문 LaTeX 템플릿.
-- [발표자료 초안](submission/presentation-draft.pptx): 별첨 순서의 PPT 초안.
+- [작업 지침](AGENTS.md)
+- [과제 요약](docs/assignment.md)
+- [과제 안내문 원문](docs/assignment-guide.md)
+- [최종보고서 서식 원문](docs/final-report-template.md)
+- [보고서 초안](docs/report.md)
+- [기초 측정 결과](docs/basic-measurement.md)
+- [응용 측정과 개선 비교](docs/app-measurement.md)
+- [데모·시스템 콜·공정성 분석](docs/diagnostics-measurement.md)
+- [IPC 구현·성능 예측](docs/ipc-prediction.md)
+- [AI 오류 검증 기록](docs/ai-record.md)
+- [IEEE 논문 템플릿](docs/paper/README.md)
+- [발표자료 초안](submission/presentation-draft.pptx)
 
 ### 문서 분류 기준
 

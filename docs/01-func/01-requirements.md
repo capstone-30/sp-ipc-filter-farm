@@ -1,7 +1,5 @@
 # 요구사항 — IPC Filter Farm
 
-[README](../../README.md) · [기술 구조](../03-tech/01-architecture.md) · [테스트 명세](../04-test/README.md)
-
 ## 목적
 
 [과제 요약](../assignment.md)에 맞춰 IPC 기초 성능을 측정하고, 이미지 필터 응용의 IPC 선택을 예측·검증·개선한다. 원문 조건과 양식은 [과제 안내문](../assignment-guide.md)·[최종보고서 서식](../final-report-template.md)에 보존하며, 현재 실행법은 [README](../../README.md#사용-방법)를 따른다.
@@ -32,19 +30,19 @@
 - 팀 구성: 1팀·3명(`--team=1..99`, 기본 1). SysV key는 `60000+10×team+용도`(MQ 요청/응답=0/1, SHM/SEM=2/3), POSIX SHM 이름은 `/osproject_<team>_shm`이다. `--key`는 잠금·소유 기록 경로이며 숫자 key를 바꾸지 않는다. 같은 팀의 MQ/SHM 서버 중복 실행 시 기존 자원을 보존하고 실패한다.
 - 공통 제약: `--ipc/team/size/depth/key`와 `payload_bytes/slot_count/warmup`은 양측 일치 필수(불일치 시 즉시 오류). `workers` 기본 2, `count/workers>0`, `size=1..2048`, `depth=1..16`, `clients=1..N`(ID `1..N`). seq는 워밍업 `0..warmup-1`, 측정 `warmup..warmup+count-1`(`warmup+count ≤ UINT32_MAX`).
 - `pipe_run [--basic] --clients=N [--output=dir] [공통 옵션]`: 익명 파이프를 생성해 서버·클라를 `fork/exec`한다(`--filter=gray,edge`처럼 ID순 지정, 상속 FD 없이 `--ipc=pipe` 직접 실행 시 거부). `--output`은 프로세스별 로그·클라 CSV·`<csv>.cpu.csv`를 저장하고, `warmup≥1`이면 서버 자원 CSV도 자동 생성한다.
-- 기초 벤치(`basic_server`/`basic_client`): 필터 없이 echo하며 `--bytes=64..1048576`, 클라 `1..8`, 처리량 `W=4`(지연 실험 `W=1`)를 사용한다. 데이터 `B`바이트 외 왕복 48B 헤더와 MQ 청크별 20B·`mtype` 비용을 별도 기록하며 전 바이트를 전송·검증한다. 8클라 잠금 영역과 겹치지 않게 meta 데이터 offset=16을 사용한다(구버전과 혼용 금지).
+- 기초 벤치(`basic_server`/`basic_client`): 필터 없이 echo하며 `--bytes=64..1048576`, 클라 `1..8`, 처리량 `W=4`(지연 실험 `W=1`)를 사용한다. 데이터 `B`바이트 외 왕복 48B 헤더와 MQ 청크별 20B·`mtype` 비용을 별도 기록하며 전 바이트를 전송·검증한다.
 - 계측·개선 옵션: `--quiet`는 진행률 출력만 끄고 stats 스레드는 유지한다. 서버 `--cpu-csv`는 `clients/count/warmup≥1` 필수다. `--inplace-gray`는 GRAY에서만 입력 버퍼를 출력으로 재사용하는 단일 요인 실험 옵션이다(BLUR/EDGE는 분리 버퍼 유지).
 
 ## 워크로드와 예측
 
 - 페이로드: 요청·응답 각 `3×size²` B + 헤더 48B.
 - 부하 패턴: N:1 요청·개별 응답, 클라당 최대 `W`개 파이프라인 폐루프 포화 부하(요청 빈도 = 전송 건수/측정 시간).
-- 서버 큐·버퍼: 작업당 `job`/`done` 큐 enqueue·dequeue 각 1회(생산:소비 1:1, 상태 쓰기 동반). 입력 원본은 읽기 전용, 결과는 작업별 독립 버퍼를 사용한다.
+- 서버는 `jobs/done` 생산:소비 1:1 큐로 작업을 전달한다([소유권·버퍼](../03-tech/01-architecture.md#응용-구조)).
 - 지표·예측: 주 지표는 `images/s`, 보조 지표는 `p99 RTT`와 자원 사용량이다. [원본 과제 조건](../assignment.md#필수-수행-순서)에 따라 응용 구현·측정 전 예측 원문을 보존하고, 이후 수정은 내용과 이유를 구분한다([예측 기록](../03-tech/01-architecture.md#예측-기록)).
 
 ## 측정 공정성
 
-아래 규칙은 과제의 [측정 방법 필수 요건](../assignment-guide.md#5-측정-방법-필수-요건)을 프로젝트에 구체화한 검사 기준이다. 원문은 출력 등 측정 간섭 최소화와 영향 설명을 요구하며 파일 I/O 전면 금지나 위반 시 비교 전체 무효를 명시하지 않는다. 프로젝트는 아래 규칙 위반 시 해당 비교를 무효로 처리한다. 측정값은 대기·상대 확인·파싱·복사·체크섬을 포함한 구현 비용이다.
+프로젝트는 아래 규칙을 위반한 비교를 무효로 처리한다. 측정값은 대기·상대 확인·파싱·복사·체크섬을 포함한 구현 비용이다.
 
 | ID | 규칙 |
 | --- | --- |
@@ -56,9 +54,7 @@
 | R6 | 평균·p50/p95/p99/max 동시 보고 |
 | R7 | 응용 내 백엔드별 분기 금지(이름은 `src/ipc/ipc.c` 테이블에 한정, usage 등 예외만 `/* R7-OK */`) |
 
-2026-11-13 측정 후 R3의 포괄적인 파일 I/O 금지 문구를 위 범위로 정정했다. 과제 원문·기존 검증 전략과의 차이, 변경 이유와 기존 결과의 평가 범위는 [진단 분석](../diagnostics-measurement.md#r3-공정성-판정)에 기록한다. 기존 측정이 변경 전 문구를 충족했다고 소급하지 않는다.
-
-벤치 시 진행률 출력을 끄고 stats 스레드는 유지한다. 양 단계 모두 CPU(`user/sys`), 컨텍스트 스위치(`nvcsw/nivcsw`), 프로세스별 `VmRSS`, 지연(RTT), 처리량(1단계 `MB/s`·`messages/s`, 2단계 `images/s`)을 기록한다([측정과 집계](../03-tech/01-architecture.md#측정과-집계)).
+R3는 2026-11-13 측정 후 정정했다. [출처·이유·기존 결과의 한계](../diagnostics-measurement.md#r3-공정성-판정)를 따르며 변경 전 충족으로 소급하지 않는다. 계측 지표·집계는 [측정과 집계](../03-tech/01-architecture.md#측정과-집계)를 따른다.
 
 ## 완료 기준
 
@@ -74,5 +70,3 @@
 ## 통신 계약
 
 필터 연산·메시지 검증·자원 보호 상세는 [IPC 프로토콜](../03-tech/03-protocol.md)을 따른다.
-
-[분류 기준](../../README.md#문서-분류-기준) · [기술 명세](../03-tech/README.md) · [테스트 명세](../04-test/README.md)

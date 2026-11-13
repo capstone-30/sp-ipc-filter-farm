@@ -45,6 +45,13 @@ server --size=64 --clients=1 >server.log 2>server.err & server_pid=$!
 wait "$server_pid"; server_pid=
 clean_ipc
 
+server --size=64 --clients=1 >server.log 2>server.err & server_pid=$!
+"$root/tests/test_app_protocol" "$key" "$backend" --bad-bye
+if wait "$server_pid"; then echo 'corrupt BYE accepted' >&2; exit 1; fi
+server_pid=
+test -s server.err
+clean_ipc
+
 server --size=512 --depth="$depth" --clients=2 --count=1000 >server.log 2>server.err & server_pid=$!
 client --size=512 --depth="$depth" --id=1 --filter=gray --count=1000 --no-save --csv=one.csv >one.log 2>one.err & client_pid=$!
 client --size=512 --depth="$depth" --id=2 --filter=edge --count=1000 --no-save --csv=two.csv >two.log 2>two.err & second_pid=$!

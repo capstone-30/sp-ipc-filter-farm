@@ -37,6 +37,7 @@ struct ipc_channel {
     int  wr[SLOT_COUNT];               /* 쓰기 fd (서버 응답은 지연 open) */
     rx_t rx[SLOT_COUNT];
     atomic_bool dead[SLOT_COUNT];
+    unsigned created;
 
     pthread_mutex_t tx, rxl;           /* 송신/수신 뮤텍스 분리 */
 };
@@ -91,14 +92,35 @@ static void chan_free(ipc_channel_t *ch)
     free(ch);
 }
 
+static int open_fifo(const char *path, int mode)
+{
+    int fd = open(path, mode | O_NONBLOCK | O_NOFOLLOW);
+    if (fd < 0) return -1;
+    struct stat st;
+    int rc = fstat(fd, &st);
+    if (!rc && (!S_ISFIFO(st.st_mode) || st.st_uid != geteuid())) { errno = EPERM; rc = -1; }
+    if (rc < 0) { int e = errno; close(fd); errno = e; return -1; }
+    return fd;
+}
+
 /* 읽기 fd + 같은 FIFO의 writer를 함께 연다(EOF 방지). 순서를 바꾸면 ENXIO. */
 static int open_read_side(ipc_channel_t *ch, uint32_t idx, const char *path)
 {
-    ch->rd[idx] = open(path, O_RDONLY | O_NONBLOCK);
+    ch->rd[idx] = open_fifo(path, O_RDONLY);
     if (ch->rd[idx] < 0) return -1;
 
-    ch->hold[idx] = open(path, O_WRONLY | O_NONBLOCK);
+    ch->hold[idx] = open_fifo(path, O_WRONLY);
     return ch->hold[idx] < 0 ? -1 : 0;
+}
+
+static int create_fifo(ipc_channel_t *ch, const char *path, unsigned bit)
+{
+    if (mkfifo(path, 0600) == 0) { ch->created |= 1u << bit; return 0; }
+    if (errno != EEXIST) return -1;
+    struct stat st;
+    if (lstat(path, &st) < 0) return -1;
+    if (!S_ISFIFO(st.st_mode) || st.st_uid != geteuid()) { errno = EPERM; return -1; }
+    return 0;
 }
 
 static ipc_channel_t *open_channel(const char *key_path, uint32_t id, const ipc_config_t *cfg)
@@ -125,9 +147,11 @@ static ipc_channel_t *open_channel(const char *key_path, uint32_t id, const ipc_
     ch->nslots = ch->server ? SLOT_COUNT : 1;
     ch->id = id;
 
+    int own_meta = 0;
     ch->meta_fd = meta_open(key_path);
     if (ch->meta_fd < 0) goto fail;
     if (meta_trylock(ch->meta_fd, id) == -1) { errno = EADDRINUSE; goto fail; }
+    own_meta = ch->server;
 
     /* ready=0으로 초기화 → IPC 생성 → ready=1. used[]는 서버 기동 시에만 0. */
     meta_t m;
@@ -139,13 +163,13 @@ static ipc_channel_t *open_channel(const char *key_path, uint32_t id, const ipc_
         fifo_path(req,  sizeof req,  key_path, "req",  client_id);
         fifo_path(resp, sizeof resp, key_path, "resp", client_id);
         if (ch->server) {
-            if (mkfifo(req, 0600) == -1 && errno != EEXIST) goto fail;
-            if (mkfifo(resp, 0600) == -1 && errno != EEXIST) goto fail;
+            if (create_fifo(ch, req, (slot - 1) * 2) < 0 ||
+                create_fifo(ch, resp, (slot - 1) * 2 + 1) < 0) goto fail;
             if (open_read_side(ch, slot - 1, req) != 0) goto fail;
             /* 응답 쓰기 fd는 클라가 리더를 열 때까지 첫 send에서 지연 open한다. */
         } else {
             if (open_read_side(ch, 0, resp) != 0) goto fail;
-            ch->wr[0] = open(req, O_WRONLY | O_NONBLOCK);
+            ch->wr[0] = open_fifo(req, O_WRONLY);
             if (ch->wr[0] < 0) goto fail;
         }
     }
@@ -156,7 +180,16 @@ static ipc_channel_t *open_channel(const char *key_path, uint32_t id, const ipc_
     }
     return ch;
 fail:
-    { int e = errno; chan_free(ch); errno = e; }
+    {
+        int e = errno;
+        for (unsigned i = 0; i < SLOT_COUNT * 2; i++) if (ch->created & (1u << i)) {
+            char path[PATHMAX];
+            fifo_path(path, sizeof path, ch->key, i % 2 ? "resp" : "req", i / 2 + 1);
+            unlink(path);
+        }
+        if (own_meta) meta_remove(ch->key);
+        chan_free(ch); errno = e;
+    }
     return NULL;
 }
 
@@ -182,7 +215,7 @@ static int ensure_wr(ipc_channel_t *ch, uint32_t idx)
     for (;;) {
         if (atomic_load(&g_stop)) { errno = ECANCELED; return -1; }
 
-        int fd = open(path, O_WRONLY | O_NONBLOCK);
+        int fd = open_fifo(path, O_WRONLY);
         if (fd >= 0) { ch->wr[idx] = fd; return 0; }
         if (errno != ENXIO) return -1;                  /* 리더 부재만 재시도 */
         if (!peer_alive(ch, idx)) { errno = EPIPE; return -1; }
@@ -212,18 +245,19 @@ static int write_all(ipc_channel_t *ch, uint32_t idx, const void *buf, size_t n)
 
 static int fifo_send(ipc_channel_t *ch, const msg_hdr_t *h, const void *payload)
 {
-    if (h->payload_len > MAX_PAYLOAD ||
-        h->client_id < 1 || h->client_id > SLOT_COUNT) { errno = EINVAL; return -1; }
+    if (!h || h->payload_len > MAX_PAYLOAD || (h->payload_len && !payload) ||
+        h->client_id < 1 || h->client_id > SLOT_COUNT ||
+        (!ch->server && h->client_id != ch->id)) { errno = EINVAL; return -1; }
 
     uint32_t idx = ch->server ? h->client_id - 1 : 0;
     if (ch->dead[idx]) { errno = EPIPE; return -1; }
 
-    pthread_mutex_lock(&ch->tx);
+    int e = pthread_mutex_lock(&ch->tx);
+    if (e) { errno = e; return -1; }
     int rc = ensure_wr(ch, idx);
     if (rc == 0) rc = write_all(ch, idx, h, sizeof *h);
     if (rc == 0 && h->payload_len > 0) rc = write_all(ch, idx, payload, h->payload_len);
-    pthread_mutex_unlock(&ch->tx);
-    return rc;
+    return ipc_unlock(&ch->tx, rc);
 }
 
 /* 1 = 메시지 완성, 0 = 아직, -1 = 프레이밍 오류(해당 ID 퇴역). */
@@ -269,6 +303,7 @@ static int drain(ipc_channel_t *ch, uint32_t idx, msg_hdr_t *h, void *payload, s
 
 static int fifo_recv(ipc_channel_t *ch, msg_hdr_t *h, void *payload, size_t cap)
 {
+    if (!h || (cap && !payload)) { errno = EINVAL; return -1; }
     int e = pthread_mutex_lock(&ch->rxl);
     if (e) { errno = e; return -1; }
 

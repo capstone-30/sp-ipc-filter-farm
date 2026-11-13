@@ -2,7 +2,7 @@
 
 2026-11-13(한국 시각)에 서버 산출물을 보존·검증했다. S1~S4와 S5 기본 용량, GRAY 버퍼 재사용 전후 비교의 원자료·집계·그래프를 확인했다. 별도 S5 기본/확대 3쌍의 6,000표본도 검증했다. 예측 원문은 [IPC 구현·성능 예측](ipc-prediction.md)에 보존한다.
 
-**해석 범위:** [추가 진단](diagnostics-measurement.md#r3-공정성-판정)에서 이미지·CSV I/O 부재와 제어 메타데이터·런타임 접근을 구분했다. 파일 I/O 전면 금지는 과제 조건이 아닌 자체 문구였으며 측정 후 R3 범위를 정정했다. 아래 값은 제어·상태 확인까지 포함한 해당 구현의 성능이며 순수 IPC 비용은 아니다.
+[R3 정정·진단 한계](diagnostics-measurement.md#r3-공정성-판정)를 적용한 전체 구현 경로 성능이며 순수 IPC 비용은 아니다.
 
 ## 측정 조건과 근거
 
@@ -16,7 +16,7 @@
 | 검증한 샘플 | 응용 219,000건, 개선 36,000건. 워밍업 샘플은 제외했다. |
 | MQ 용량 | 원래 응용 실행의 요청·응답 큐는 `msg_qbytes=16384`다. 이 실행에서는 `S5_MSGMNB` 미설정으로 확대를 실행하지 않았고, [별도 S5 비교](#s5-mq-큐-용량)에서 확대를 측정했다. |
 
-측정 정의는 [측정과 집계](03-tech/01-architecture.md#측정과-집계)를 따른다. 아래 표는 **실행별 지표의 3회 반복 중앙값**이다. CPU는 서버·클라 누적 시간의 합계이며 사용률이 아니다. RSS는 경계 시점 합계이며 공유 페이지 중복을 포함할 수 있어 최대 메모리나 물리 메모리와 같지 않다.
+아래 표는 [측정·집계 정의](03-tech/01-architecture.md#측정과-집계)에 따른 실행별 지표의 3회 중앙값이다.
 
 [응용 중앙값 CSV](assets/app-measurement/app-median.csv)·[응용 환경](assets/app-measurement/app-environment.txt), [개선 중앙값 CSV](assets/app-measurement/improvement-median.csv)·[개선 환경](assets/app-measurement/improvement-environment.txt)에 전체 지표를 첨부했다. 전 원자료는 Git 제외 경로인 로컬 `bench/results/app-run/`과 `bench/results/improvement-run/`에 복사했다. 원본 해시 2,026개·279개와 파생 파일 포함 보존 해시 2,033개·283개를 확인했으며 보존 목록은 각각 `bench/results/app-run-preservation.SHA256SUMS`, `bench/results/improvement-run-preservation.SHA256SUMS`다.
 
@@ -155,4 +155,4 @@ RSS가 같아도 커널 큐 비용이 같다는 뜻은 아니다. 요청·응답
 
 [산출물 검증 로그](../tests/logs/app-measurement.log)에 검사 범위를 기록했다. 전체 seq·ID·페이로드·클라 matched 로그를 확인하고 RTT 백분위·평균·처리량·CPU·컨텍스트 스위치·RSS를 원자료에서 재계산해 CSV와 대조했다. 반복별 조합·중앙값, stderr 공백, 실행 후 `ipcs` 객체 부재를 확인했다. `bench/check_results.sh`는 기초·응용·개선 자료의 해시·최소 조합·그래프 존재 검사를 통과했다. 성능 측정이나 Linux 회귀 검사를 다시 실행한 것은 아니다.
 
-별도 데모·`strace` 분석은 [진단 결과](diagnostics-measurement.md)에 기록했다. 이미지·CSV I/O는 해당 프로세스의 CPU 구간 밖이었고 `key.meta` 접근과 MQ의 추가 `/proc` 읽기는 비용에 포함해 공개했다. 과제 원문 확인 후 자체 R3의 범위를 명확히 한 이유와 시점도 기록했다. 산출물 무결성·추적 범위·해석 한계는 각각 구분한다. 그래프 생성은 로컬 Python에 `matplotlib`이 없어 재실행하지 않았으며, 서버 생성본과 중앙값 CSV를 보존했다. 새 최종 보고서·발표자료·영상·패키지 검증은 [남은 작업](03-tech/01-architecture.md#남은-작업과-리스크)을 따른다.
+공정성·제어 I/O 해석은 [진단 결과](diagnostics-measurement.md)를 따른다. 로컬 matplotlib 부재로 그래프를 재생성하지 않았으며 서버 생성본·중앙값 CSV를 보존했다. 제출과 수정본 검증은 [남은 작업](03-tech/01-architecture.md#남은-작업과-리스크)을 따른다.

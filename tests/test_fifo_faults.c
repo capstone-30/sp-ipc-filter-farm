@@ -9,9 +9,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/wait.h>
+#include <sys/stat.h>
 #include <time.h>
 #include <unistd.h>
 #include "../src/ipc/ipc.h"
+#include "../src/ipc/ipc_meta.h"
 
 atomic_bool g_stop = false;
 static const ipc_backend_t *backend;
@@ -146,6 +148,43 @@ static void *stopper(void *arg)
     return NULL;
 }
 
+static void protected_paths(const char *key)
+{
+    char meta[300], target[300], conflict[300], first[300];
+    snprintf(meta, sizeof meta, "%s.meta", key);
+    snprintf(target, sizeof target, "%s.keep", key);
+    snprintf(conflict, sizeof conflict, "%s.req.2", key);
+    snprintf(first, sizeof first, "%s.req.1", key);
+    int fd = open(target, O_CREAT | O_EXCL | O_RDWR, 0600);
+    assert(fd >= 0 && write(fd, "keep", 4) == 4);
+    assert(symlink(target, meta) == 0);
+    assert(meta_open(key) == -1 && errno == ELOOP);
+    assert(unlink(meta) == 0 && link(target, meta) == 0);
+    assert(meta_open(key) == -1 && errno == EPERM);
+    assert(unlink(meta) == 0 && mkfifo(meta, 0600) == 0);
+    assert(meta_open(key) == -1 && errno == EPERM);
+    assert(unlink(meta) == 0);
+    for (unsigned symlinked = 0; symlinked < 2; symlinked++) {
+        if (symlinked) assert(symlink(target, conflict) == 0);
+        else assert(link(target, conflict) == 0);
+        assert(backend->server_open(key, &cfg) == NULL && errno == EPERM);
+        assert(access(first, F_OK) == -1 && errno == ENOENT);
+        assert(access(meta, F_OK) == -1 && errno == ENOENT);
+        assert(unlink(conflict) == 0);
+    }
+    ipc_channel_t *server = backend->server_open(key, &cfg);
+    assert(server != NULL);
+    snprintf(conflict, sizeof conflict, "%s.resp.1", key);
+    assert(unlink(conflict) == 0 && link(target, conflict) == 0);
+    msg_hdr_t h = {.client_id = 1, .payload_len = 1};
+    assert(backend->send(server, &h, "x") == -1 && errno == EPERM);
+    assert(unlink(conflict) == 0);
+    cleanup(server, key);
+    char contents[4];
+    assert(pread(fd, contents, 4, 0) == 4 && !memcmp(contents, "keep", 4));
+    assert(close(fd) == 0 && unlink(target) == 0);
+}
+
 int main(void)
 {
     assert(signal(SIGPIPE, SIG_IGN) != SIG_ERR);
@@ -154,10 +193,16 @@ int main(void)
     char directory[] = "/tmp/ipcff-fault.XXXXXX", key[256];
     assert(mkdtemp(directory) != NULL);
     assert(snprintf(key, sizeof key, "%s/key", directory) > 0);
+    protected_paths(key);
     client_death(key);
     server_death(key);
     ipc_channel_t *server = backend->server_open(key, &cfg);
     assert(server != NULL);
+    msg_hdr_t invalid = {.client_id = 1, .payload_len = 1};
+    assert(backend->send(server, NULL, NULL) == -1 && errno == EINVAL);
+    assert(backend->send(server, &invalid, NULL) == -1 && errno == EINVAL);
+    assert(backend->recv(server, NULL, NULL, 0) == -1 && errno == EINVAL);
+    assert(backend->recv(server, &invalid, NULL, 1) == -1 && errno == EINVAL);
     pthread_t thread;
     assert(pthread_create(&thread, NULL, stopper, NULL) == 0);
     msg_hdr_t h;

@@ -22,7 +22,16 @@ int meta_open(const char *key_path)
     char path[1024];
     if (meta_path(path, sizeof path, key_path) < 0) return -1;
     /* 프로세스당 fd 하나만 열어 유지한다. 다른 fd를 닫으면 잠금을 잃는다. */
-    return open(path, O_RDWR | O_CREAT, 0600);
+    int fd = open(path, O_RDWR | O_CREAT | O_NOFOLLOW | O_NONBLOCK, 0600);
+    if (fd < 0) return -1;
+    struct stat st;
+    int rc = ipc_stat_owned(fd, &st);
+    if (rc == 0 && st.st_nlink != 1) { errno = EPERM; rc = -1; }
+    if (rc < 0) {
+        int e = errno;
+        close(fd); errno = e; return -1;
+    }
+    return fd;
 }
 
 int meta_remove(const char *key_path)

@@ -15,7 +15,7 @@ concurrency:
 jobs:
   test:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - name: Build and check headers
@@ -23,4 +23,13 @@ jobs:
       - name: Unit and IPC regression tests
         run: make test test-mq test-shm
       - name: Submission result validation regression
-        run: python3 tests/test_check_results.py
+        run: |
+          python3 tests/test_check_results.py
+          python3 tests/test_package.py
+          bash tests/test_aggregate.sh
+      - name: Application and pipe regression tests
+        run: |
+          for ipc in fifo sysv_mq sysv_shm posix_shm; do
+            make test-app IPC="$ipc"
+          done
+          make test-pipe test-bench

@@ -1,0 +1,19 @@
+Environment: macOS arm64, Apple clang; these checks do not establish Linux runtime correctness.
+Scope: meta/FIFO file safety, FIFO initialization rollback and argument validation, empty BYE checksum, submission packaging, CI coverage.
+
+PASS: native FIFO fault regression with -D_DARWIN_C_SOURCE -Wall -Wextra -Werror.
+PASS: the same FIFO regression with -fsanitize=address,undefined.
+Covered: meta symlink/hardlink/FIFO rejection, preservation of conflicting regular files and symlinks, rollback of created FIFO/meta paths, regular-file replacement of a response FIFO, null send/receive buffers, client/server death, isolated surviving ID, restart, cancellation and cleanup.
+
+PASS: common proto, bqueue (1,000,000 jobs), PPM, filters, timer and IPC utilities; forced rebuild without warnings; headers.
+PASS: image/basic option regressions. Darwin supplied declarations for sigtimedwait/pthread_condattr_setclock in an external temporary header; -Wl,-dead_strip omitted unused unsupported APIs. These Linux APIs were not exercised.
+PASS: changed C syntax, including server/client and application protocol fixture. Used the external declarations and suppressed Darwin semaphore deprecation warnings; no Linux application execution.
+PASS: aggregate fixture (nearest rank, time boundaries, CPU/resource totals, duplicate seq rejection).
+PASS: python3 tests/test_package.py. Synthetic isolated project verified final report/PPT/video bytes, selected evidence, exclusion of bench/results and compiled test_basic_options, inclusion of document checker, existing archive preservation, staging cleanup on success/failure, and no incomplete archive after a copy failure.
+PASS: python3 tests/test_check_results.py (existing submission-matrix regression).
+PASS: Bash syntax for bench/tests scripts; full and six individual builds dry-run; document checker; git diff --check.
+Static analysis: ipc_meta.c had no diagnostics. FIFO read-under-lock warning is a blocking-call heuristic; open_fifo supplies O_NONBLOCK to every descriptor. Actual dead-peer/cancellation tests passed.
+
+NOT RUN: Linux whole build/link, new corrupt-BYE application regression, full pipe/MQ/SHM application/fault suite, packaged-source Ubuntu build, CI execution and performance remeasurement.
+Docker daemon was unavailable; no Docker execution performed. Existing performance data and source snapshots were preserved and are not results of this modified revision.
+Pending non-code evidence: team details/deadline, final report/presentation/video, final Ubuntu archive verification. Resume when those inputs/environment are available; do not invent prediction dates or measurements.

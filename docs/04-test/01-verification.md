@@ -4,28 +4,23 @@
 
 ## 검증 전략
 
-CI는 Linux에서 경고 없는 전체 빌드·헤더 검사와 공통·IPC·MQ·SHM 회귀 테스트를 수행한다. 장시간 시나리오와 벤치는 [README](../../README.md#테스트) 절차로 실행한다.
+CI는 Linux에서 경고 없는 전체 빌드·헤더 검사와 공통·IPC·MQ·SHM·응용·pipe 회귀, 벤치 smoke 및 제출 도구 검사를 수행하도록 구성한다. 정식 성능 측정은 [README](../../README.md#테스트) 절차와 구분한다. CI 설정의 추가를 실제 실행 통과로 인정하지 않는다.
 
 ### 현재 검증 판정
 
-근거는 [로컬 검증 로그](../../tests/logs/macos-assignment-contract.log), 2026-11-12 검증한 [기초 측정 결과](../basic-measurement.md), 2026-11-13(한국 시각)의 [수정 후 Linux 검사 로그](../../tests/logs/linux-restart-fix.log)다. 응용·개선 산출물 근거는 [응용 측정 결과](../app-measurement.md)와 [검증 로그](../../tests/logs/app-measurement.log)다. 이전 Linux 회귀 로그는 구버전 코드이므로 제외한다.
+메타/FIFO·BYE·패키지 수정본은 macOS만 확인했다. 아래 Linux 검사·성능 판정은 각 로그·스냅샷의 수정 전 리비전에 한정하며 수정본으로 확장하지 않는다. Linux CI·회귀 실행 후 갱신한다.
 
 | 환경 | 판정 | 범위 |
 | --- | --- | --- |
-| macOS | 통과 | 공통 모듈(큐 100만 건), 헤더, GRAY in-place 동등성, IPC 유틸, 옵션·페이로드 검증, 집계·그래프 fixture, Bash 문법, 링크·경로, 전체·6개 개별 빌드 dry-run, 초안 tar 생성·검증 |
-| macOS 제출 검사 | 통과 | `python3 tests/test_check_results.py`로 합성 자료의 전체 S1 통과, 작은 크기·IPC별 누락 12종과 기존 256² 이상 범위만 있는 자료의 거절을 확인했다. 벤치 스크립트 Bash 문법과 문서 검사도 통과했다. 변경된 S1 범위의 Linux 측정 자료는 아래 응용·개선 산출물 검사로 확인했다. |
-| Linux 기초 측정 | 산출물 검증 통과 | 필수 3종의 전 실험 조합·원자료·자원 집계·중앙값·그래프·체크섬·실행 후 IPC 기록을 확인했다. 상세 근거와 한계는 [측정 결과](../basic-measurement.md#검증-판정과-남은-확인)를 따른다. |
-| Linux 빌드·단위 | 통과 | Ubuntu 24.04.5·GCC 13.3.0에서 전체·필수 3종 단계별 개별 빌드 6개·헤더를 경고 없이 빌드했다. 공통 단위·팀 계약·IPC 왕복·FIFO/pipe 프로토콜·MQ 장애 검사가 통과했다. |
-| Linux 응용·도구 | 통과 | pipe·FIFO·MQ·SysV/POSIX SHM 응용 통합, SysV SHM depth=1/4/16, 2클라×1,000장·스레드 수·SIGINT·정리, pipe 자식 회수, 벤치 smoke·집계 검사를 통과했다. |
-| Linux SHM 장애·정리 | 통과 | SHM/POSIX 전용 장애·정리 검사와 `test_clean.sh` 추가 5회 연속 실행이 통과했다. 잔존 ready·잠금 PID 불일치·ready=0·정상 연결·취소 회귀도 통과했다. |
-| Linux 응용·개선 정식 측정 | 산출물 검증 통과 | S1~S4·S5 기본 용량 156회와 개선 18회의 255,000샘플·seq·로그·자원·통계 재계산·3회 중앙값·체크섬·실행 후 IPC 부재를 확인했다. 기초·응용·개선 통합 제출 검사도 통과했다. [측정 결과와 한계](../app-measurement.md#검증-판정과-남은-확인)를 따른다. |
-| 데모·시스템 콜 진단 | 정합성 통과 | 10회·2,000표본의 seq·ID·페이로드·로그, GRAY/EDGE 전후 이미지 전 바이트와 본인 IPC 정리를 확인했다. [진단 결과](../diagnostics-measurement.md)를 따른다. |
-| R3 공정성 | 명확화한 범위 통과 | 확장 추적에서 9개 프로세스 CPU 구간의 이미지·CSV I/O 부재를 확인했다. `key.meta` 접근과 MQ 런타임 `/proc` 읽기는 포함한 비용으로 공개한다. 과제 원문 확인 후 자체 R3를 정정한 사실과 기존 포괄 문구의 불충족은 [진단 분석](../diagnostics-measurement.md#r3-공정성-판정)에 구분했다. |
-| S5 확대 비교 | 산출물 검증 통과 | 기본/확대 3쌍의 6,000표본·원자료 통계·자원 독립 재계산·실제 두 큐 용량·3회 기본값 복원·최종 16,384B와 잔존 IPC 부재를 확인했다. [결과](../app-measurement.md#s5-mq-큐-용량)와 [검증 로그](../../tests/logs/s5-measurement.log)를 따른다. |
+| macOS 공통·도구 | 통과 | 공통 모듈·헤더·GRAY 동등성·IPC 유틸·옵션·집계/그래프 fixture·문법·문서·빌드 dry-run·초안 tar를 확인했다([로그](../../tests/logs/macos-assignment-contract.log)). |
+| macOS 수정본 | 통과 | 메타/FIFO 파일 보호·실패 회수·장애·취소·재시작을 네이티브와 ASan/UBSan으로 확인했다. 공통·옵션·집계·패키지·제출 검사도 통과했다. Linux BYE 오류·전체 응용은 미실행이다. |
+| 제출 검사 | 통과 | 합성 S1 전체 조합 통과와 작은 크기·IPC 누락 12종 및 기존 대형 범위만 있는 자료의 거절을 확인했다. |
+| Linux 빌드·회귀 | 수정 전 통과 | 전체·6개 개별 빌드·헤더·단위·팀·IPC·응용 5종·SHM depth=1/4/16·장애·정리·벤치 smoke를 확인했다. 재시작 검사·정리 추가 5회도 통과했고 잔존 IPC·프로세스는 없었다. |
+| 기초 산출물 | 검증 통과 | [360회·135만 표본과 검증 한계](../basic-measurement.md#검증-판정과-남은-확인)를 따른다. |
+| 응용·개선·S5 산출물 | 검증 통과 | [측정 결과](../app-measurement.md#검증-판정과-남은-확인)와 [S5 3쌍 비교](../app-measurement.md#s5-mq-큐-용량)를 따른다. |
+| 데모·R3 | 정합성·정정 범위 통과 | [이미지 대조·9개 CPU 구간·제어 I/O·R3 측정 후 정정](../diagnostics-measurement.md)을 따른다. |
 
-Linux 검사는 서버의 별도 디렉터리 `/home/student/cestudent/22/ce22b035/ipcff-restart-fix.C8B8bM/`에서 수행했다. 수정 전후 소스·개별 로그·산출물 아카이브·해시는 로컬 `bench/results/linux-restart-fix-20261113/`에 보존했다. 당시 실행한 코드·테스트의 해시가 로컬 파일과 일치함을 확인했다. 이후 S1 측정 범위와 제출 검사 변경은 위 macOS 제출 검사·Linux 응용 산출물 검사로 구분하며 기존 Linux 빌드·회귀 판정을 확장하지 않는다. 종료 후 MQ·SHM·SEM, 팀 1·2 POSIX SHM 이름 및 검사 프로세스 잔존은 없었다.
-
-`startup_metadata` 회귀는 파이프로 실행 순서를 고정해 서버 잠금이 없거나 새 PID의 잠금과 이전 ready가 섞인 상태를 검사한다. 수정 전에는 잔존 ready를 준비 완료로 인정해 실패했고, 수정 후에는 게시 PID와 실제 잠금 소유 PID가 일치할 때까지 대기해 통과했다. 최초 FIFO 실패의 정확한 실행 순서를 소급하지 않으며, 해당 오류를 일으킬 수 있는 공통 초기 접속 결함을 재현·수정한 근거로 사용한다. 연결 후 상대 사망 감지·설정 불일치 거절은 기존 회귀로 함께 확인했다.
+Linux 회귀 근거는 [linux-restart-fix.log](../../tests/logs/linux-restart-fix.log), 최신 macOS 근거는 [macos-risk-fixes.log](../../tests/logs/macos-risk-fixes.log)다. Linux 소스·개별 로그·해시는 로컬 `bench/results/linux-restart-fix-20261113/`에 보존했다. `startup_metadata`는 잔존 ready와 게시 PID·잠금 PID 불일치를 순서 고정으로 재현한 검사이며, 최초 FIFO 실패의 실행 순서를 소급한 근거는 아니다.
 
 ### 검증 항목과 판정 기준
 
@@ -48,5 +43,3 @@ Linux 검사는 서버의 별도 디렉터리 `/home/student/cestudent/22/ce22b0
 | R3 | 확장 `TRACE=io`에서 프로세스별 `getrusage` 경계 사이 일반 파일 I/O를 확인한다(`pread64/pwrite64`, FD 경로·스레드 소속 포함). 이미지·CSV, 제어 메타데이터와 경계 `VmRSS` 읽기를 구분하며 일부 부재로 전체 통과를 대신하지 않는다. |
 | R4/R5 | `run_bench.sh`의 `--no-save` 적용 및 `CLOCK_REALTIME`의 `sem_timedwait` 전용 사용 확인 |
 | R6/R7 | 집계 CSV 백분위 열 확인; 응용 내 `R7-OK` 외 백엔드명 출현 0 확인 |
-
-참고: [Linux man-pages](https://man7.org/linux/man-pages/) · [fcntl](https://man7.org/linux/man-pages/man3/fcntl.3p.html) · [sigtimedwait](https://man7.org/linux/man-pages/man3/sigtimedwait.3p.html)
