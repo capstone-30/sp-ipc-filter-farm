@@ -4,7 +4,7 @@ root=$(cd "$(dirname "$0")/.." && pwd)
 cd "$root"
 phase=${1:-basic}
 [[ $(uname -s) == Linux ]] || { echo 'Linux에서 실행하세요. Docker는 자동 실행하지 않습니다.' >&2; exit 1; }
-case "$phase" in basic|app|improve|smoke) ;; *) echo 'usage: run_bench.sh basic|app|improve|smoke' >&2; exit 1;; esac
+case "$phase" in basic|app|improve|smoke|s5) ;; *) echo 'usage: run_bench.sh basic|app|improve|smoke|s5' >&2; exit 1;; esac
 count=${COUNT:-1000}; warmup=${WARMUP:-100}; repeats=${REPEATS:-3}; team=${TEAM:-1}
 limit=${BENCH_TIMEOUT:-86400}; workers=${WORKERS:-2}
 for value in "$count" "$warmup" "$repeats" "$team" "$limit" "$workers"; do
@@ -123,7 +123,7 @@ for ((repeat=1;repeat<=repeats;repeat++)); do
             run_case "$backend" improvement 32 2 gray 4 "$repeat" inplace --inplace-gray;;
         esac
     done
-    if [[ $phase == app ]]; then
+    if [[ $phase == app || $phase == s5 ]]; then
         run_case sysv_mq s5 1024 1 gray 1 "$repeat" default
         if [[ -n ${S5_MSGMNB:-} ]]; then
             [[ $S5_MSGMNB =~ ^[1-9][0-9]*$ ]] || { echo 'S5_MSGMNB must be positive integer' >&2; exit 1; }

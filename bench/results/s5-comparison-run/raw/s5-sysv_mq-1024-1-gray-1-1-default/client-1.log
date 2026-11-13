@@ -1,0 +1,2 @@
+n=1000  p50=474679.6us p95=492360.7us p99=494581.3us max=499976.0us mean=468077.9us  6.7MB/s  2.1img/s
+client 1: matched=1000 mismatches=0 warmup=100

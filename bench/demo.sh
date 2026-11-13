@@ -27,7 +27,7 @@ ipcs -q -m -s >ipcs-before.txt
 tracer() {
     prefix=()
     if [[ $trace == summary ]]; then prefix=(strace -c -f -o "$work/$1.strace-summary.txt"); fi
-    if [[ $trace == io ]]; then prefix=(strace -f -tt -e trace=openat,read,write,getrusage -o "$work/$1.io.trace"); fi
+    if [[ $trace == io ]]; then prefix=(strace -f -tt -yy -e trace=openat,read,write,pread64,pwrite64,close,getrusage,clone,clone3,fork,vfork,execve -o "$work/$1.io.trace"); fi
 }
 common=(--team="${TEAM:-1}" --size=256 --depth=4 --warmup=10 --count=100 "--key=$key")
 [[ $trace == none ]] || common+=(--quiet)

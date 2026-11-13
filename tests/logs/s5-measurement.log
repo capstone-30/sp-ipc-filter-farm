@@ -1,0 +1,15 @@
+default repeat=1: 1000 samples, seq/ID/payload/logs, capacity=16384x2, independent metrics, own IPC cleanup OK
+enlarged repeat=1: 1000 samples, seq/ID/payload/logs, capacity=65536x2, independent metrics, own IPC cleanup OK
+default repeat=2: 1000 samples, seq/ID/payload/logs, capacity=16384x2, independent metrics, own IPC cleanup OK
+enlarged repeat=2: 1000 samples, seq/ID/payload/logs, capacity=65536x2, independent metrics, own IPC cleanup OK
+default repeat=3: 1000 samples, seq/ID/payload/logs, capacity=16384x2, independent metrics, own IPC cleanup OK
+enlarged repeat=3: 1000 samples, seq/ID/payload/logs, capacity=65536x2, independent metrics, own IPC cleanup OK
+Median values: [{'mode': 'default', 'msg_qbytes': 16384, 'p50_us': 474679.634, 'p95_us': 492333.669, 'p99_us': 494581.271, 'max_us': 499719.722, 'mean_us': 468077.881132, 'mbps': 6.712965, 'imgs': 2.133994, 'ru_utime_ms': 69104.876, 'ru_stime_ms': 46627.519, 'nvcsw': 1436805.0, 'nivcsw': 213.0, 'rss_start_kib': 28356.0, 'rss_end_kib': 31676.0}, {'mode': 'enlarged', 'msg_qbytes': 65536, 'p50_us': 153500.681, 'p95_us': 165120.333, 'p99_us': 166605.785, 'max_us': 168618.743, 'mean_us': 150201.925242, 'mbps': 20.865094, 'imgs': 6.632835, 'ru_utime_ms': 57748.018, 'ru_stime_ms': 19276.568, 'nvcsw': 426380.0, 'nivcsw': 201.0, 'rss_start_kib': 28356.0, 'rss_end_kib': 31676.0}]
+imgs 2.133994 -> 6.632835 (+210.82%)
+p99_us 494581.271000 -> 166605.785000 (-66.31%)
+ru_utime_ms 69104.876000 -> 57748.018000 (-16.43%)
+ru_stime_ms 46627.519000 -> 19276.568000 (-58.66%)
+nvcsw 1436805.000000 -> 426380.000000 (-70.32%)
+rss_end_kib 31676.000000 -> 31676.000000 (+0.00%)
+6 runs / 6000 samples: preservation hashes and independent recalculation OK; control/runtime I/O interpretation is documented in docs/diagnostics-measurement.md.
+Source/build/measurement tool snapshot: 45 files byte-equal; 3 restore pairs, final 16384 and own IPC cleanup OK

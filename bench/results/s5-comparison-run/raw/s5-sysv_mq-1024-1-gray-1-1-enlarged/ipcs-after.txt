@@ -1,0 +1,12 @@
+
+------ Message Queues --------
+key        msqid      owner      perms      used-bytes   messages    
+
+------ Shared Memory Segments --------
+key        shmid      owner      perms      bytes      nattch     status      
+0x0000eaba 163893     ce22b022   600        41946176   1                       
+
+------ Semaphore Arrays --------
+key        semid      owner      perms      nsems     
+0x0000eabb 163893     ce22b022   600        42        
+

@@ -19,7 +19,9 @@ CI는 Linux에서 경고 없는 전체 빌드·헤더 검사와 공통·IPC·MQ�
 | Linux 응용·도구 | 통과 | pipe·FIFO·MQ·SysV/POSIX SHM 응용 통합, SysV SHM depth=1/4/16, 2클라×1,000장·스레드 수·SIGINT·정리, pipe 자식 회수, 벤치 smoke·집계 검사를 통과했다. |
 | Linux SHM 장애·정리 | 통과 | SHM/POSIX 전용 장애·정리 검사와 `test_clean.sh` 추가 5회 연속 실행이 통과했다. 잔존 ready·잠금 PID 불일치·ready=0·정상 연결·취소 회귀도 통과했다. |
 | Linux 응용·개선 정식 측정 | 산출물 검증 통과 | S1~S4·S5 기본 용량 156회와 개선 18회의 255,000샘플·seq·로그·자원·통계 재계산·3회 중앙값·체크섬·실행 후 IPC 부재를 확인했다. 기초·응용·개선 통합 제출 검사도 통과했다. [측정 결과와 한계](../app-measurement.md#검증-판정과-남은-확인)를 따른다. |
-| S5 확대·공정성 추적 | 미확인 | S5 확대는 `S5_MSGMNB` 미설정으로 미측정이다. 별도 데모·`strace` 자료는 미분석이며 R3·시스템 콜 비용은 해당 자료 확인 후 판정한다. |
+| 데모·시스템 콜 진단 | 정합성 통과 | 10회·2,000표본의 seq·ID·페이로드·로그, GRAY/EDGE 전후 이미지 전 바이트와 본인 IPC 정리를 확인했다. [진단 결과](../diagnostics-measurement.md)를 따른다. |
+| R3 공정성 | 명확화한 범위 통과 | 확장 추적에서 9개 프로세스 CPU 구간의 이미지·CSV I/O 부재를 확인했다. `key.meta` 접근과 MQ 런타임 `/proc` 읽기는 포함한 비용으로 공개한다. 과제 원문 확인 후 자체 R3를 정정한 사실과 기존 포괄 문구의 불충족은 [진단 분석](../diagnostics-measurement.md#r3-공정성-판정)에 구분했다. |
+| S5 확대 비교 | 산출물 검증 통과 | 기본/확대 3쌍의 6,000표본·원자료 통계·자원 독립 재계산·실제 두 큐 용량·3회 기본값 복원·최종 16,384B와 잔존 IPC 부재를 확인했다. [결과](../app-measurement.md#s5-mq-큐-용량)와 [검증 로그](../../tests/logs/s5-measurement.log)를 따른다. |
 
 Linux 검사는 서버의 별도 디렉터리 `/home/student/cestudent/22/ce22b035/ipcff-restart-fix.C8B8bM/`에서 수행했다. 수정 전후 소스·개별 로그·산출물 아카이브·해시는 로컬 `bench/results/linux-restart-fix-20261113/`에 보존했다. 당시 실행한 코드·테스트의 해시가 로컬 파일과 일치함을 확인했다. 이후 S1 측정 범위와 제출 검사 변경은 위 macOS 제출 검사·Linux 응용 산출물 검사로 구분하며 기존 Linux 빌드·회귀 판정을 확장하지 않는다. 종료 후 MQ·SHM·SEM, 팀 1·2 POSIX SHM 이름 및 검사 프로세스 잔존은 없었다.
 
@@ -43,7 +45,7 @@ Linux 검사는 서버의 별도 디렉터리 `/home/student/cestudent/22/ce22b0
 | 공정성 규칙 | 확인 방법 |
 | --- | --- |
 | R1/R2 | `test_proto`, 불량 체크섬 거절 및 전 수신 경로 체크섬 검증 |
-| R3 | 별도 `TRACE=io`에서 PID별 `getrusage` 경계 사이 이미지·CSV 파일 I/O 부재 확인(경계 `VmRSS` 읽기 구분) |
+| R3 | 확장 `TRACE=io`에서 프로세스별 `getrusage` 경계 사이 일반 파일 I/O를 확인한다(`pread64/pwrite64`, FD 경로·스레드 소속 포함). 이미지·CSV, 제어 메타데이터와 경계 `VmRSS` 읽기를 구분하며 일부 부재로 전체 통과를 대신하지 않는다. |
 | R4/R5 | `run_bench.sh`의 `--no-save` 적용 및 `CLOCK_REALTIME`의 `sem_timedwait` 전용 사용 확인 |
 | R6/R7 | 집계 CSV 백분위 열 확인; 응용 내 `R7-OK` 외 백엔드명 출현 0 확인 |
 

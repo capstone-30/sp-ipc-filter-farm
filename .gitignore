@@ -18,7 +18,8 @@
 /bench/__pycache__/
 
 # Local measurement evidence and generated artifacts
-/bench/results/
+/bench/results/*
+!/bench/results/s5-comparison-run/
 
 # Test executables
 /tests/test_proto

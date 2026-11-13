@@ -1,0 +1,2 @@
+# Preserve measurement evidence bytes for SHA-256 verification.
+/bench/results/s5-comparison-run/** -text

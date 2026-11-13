@@ -1,0 +1,22 @@
+Remote preservation hashes: OK
+demo-pipe-io-20261113T065323Z-940455: 200 seq/ID/payload/matched samples, generated input + GRAY/EDGE all pixels, independent RTT/throughput/resources, stderr, own IPC cleanup OK
+demo-pipe-io-20261113T065425Z-941350: 200 seq/ID/payload/matched samples, generated input + GRAY/EDGE all pixels, independent RTT/throughput/resources, stderr, own IPC cleanup OK
+demo-pipe-summary-20261113T012305Z-820659: 200 seq/ID/payload/matched samples, generated input + GRAY/EDGE all pixels, independent RTT/throughput/resources, stderr, own IPC cleanup OK
+demo-sysv_mq-io-20261113T065323Z-940496: 200 seq/ID/payload/matched samples, generated input + GRAY/EDGE all pixels, independent RTT/throughput/resources, stderr, own IPC cleanup OK
+demo-sysv_mq-io-20261113T065425Z-941386: 200 seq/ID/payload/matched samples, generated input + GRAY/EDGE all pixels, independent RTT/throughput/resources, stderr, own IPC cleanup OK
+demo-sysv_mq-summary-20261113T012306Z-820694: 200 seq/ID/payload/matched samples, generated input + GRAY/EDGE all pixels, independent RTT/throughput/resources, stderr, own IPC cleanup OK
+demo-sysv_shm-io-20261113T012310Z-820658: 200 seq/ID/payload/matched samples, generated input + GRAY/EDGE all pixels, independent RTT/throughput/resources, stderr, own IPC cleanup OK
+demo-sysv_shm-io-20261113T065429Z-941445: 200 seq/ID/payload/matched samples, generated input + GRAY/EDGE all pixels, independent RTT/throughput/resources, stderr, own IPC cleanup OK
+demo-sysv_shm-none-20261113T012211Z-820077: 200 seq/ID/payload/matched samples, generated input + GRAY/EDGE all pixels, independent RTT/throughput/resources, stderr, own IPC cleanup OK
+demo-sysv_shm-summary-20261113T012309Z-820757: 200 seq/ID/payload/matched samples, generated input + GRAY/EDGE all pixels, independent RTT/throughput/resources, stderr, own IPC cleanup OK
+CPU interval: {'backend': 'pipe', 'trace': 'all.io.trace', 'pid': 941363, 'start': '15:54:25.308628', 'end': '15:54:25.669938', 'metadata_reads': 0, 'metadata_writes': 1, 'other_regular_io': 0}
+CPU interval: {'backend': 'pipe', 'trace': 'all.io.trace', 'pid': 941364, 'start': '15:54:25.310724', 'end': '15:54:25.622622', 'metadata_reads': 0, 'metadata_writes': 0, 'other_regular_io': 0}
+CPU interval: {'backend': 'pipe', 'trace': 'all.io.trace', 'pid': 941365, 'start': '15:54:25.311857', 'end': '15:54:25.670426', 'metadata_reads': 0, 'metadata_writes': 0, 'other_regular_io': 0}
+CPU interval: {'backend': 'sysv_mq', 'trace': 'client-1.io.trace', 'pid': 941412, 'start': '15:54:26.223948', 'end': '15:54:28.861263', 'metadata_reads': 200, 'metadata_writes': 0, 'other_regular_io': 0}
+CPU interval: {'backend': 'sysv_mq', 'trace': 'client-2.io.trace', 'pid': 941413, 'start': '15:54:26.242067', 'end': '15:54:29.108258', 'metadata_reads': 200, 'metadata_writes': 0, 'other_regular_io': 0}
+Other regular file I/O: ['openat(AT_FDCWD</home/student/cestudent/22/ce22b035/sp-ipc-filter-farm/bench/results/demo-sysv_mq-io-20261113T065425Z-941386>, "/proc/sys/vm/overcommit_memory", O_RDONLY|O_CLOEXEC) = 5</proc/sys/vm/overcommit_memory>', 'read(5</proc/sys/vm/overcommit_memory>, "0", 1) = 1']
+CPU interval: {'backend': 'sysv_mq', 'trace': 'server.io.trace', 'pid': 941399, 'start': '15:54:26.211178', 'end': '15:54:29.106104', 'metadata_reads': 403, 'metadata_writes': 25, 'other_regular_io': 2}
+CPU interval: {'backend': 'sysv_shm', 'trace': 'client-1.io.trace', 'pid': 941471, 'start': '15:54:29.458927', 'end': '15:54:29.774446', 'metadata_reads': 200, 'metadata_writes': 0, 'other_regular_io': 0}
+CPU interval: {'backend': 'sysv_shm', 'trace': 'client-2.io.trace', 'pid': 941473, 'start': '15:54:29.459482', 'end': '15:54:29.837917', 'metadata_reads': 200, 'metadata_writes': 0, 'other_regular_io': 0}
+CPU interval: {'backend': 'sysv_shm', 'trace': 'server.io.trace', 'pid': 941459, 'start': '15:54:29.455414', 'end': '15:54:29.836488', 'metadata_reads': 787, 'metadata_writes': 1, 'other_regular_io': 0}
+Image/CSV I/O absent inside all 9 process CPU intervals; control/runtime file I/O disclosed; former blanket rule not met, current scoped rule passed (see docs/diagnostics-measurement.md).
