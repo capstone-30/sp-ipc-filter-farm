@@ -28,7 +28,7 @@ AGENTS_BLOCK = """\
 ## 문서 관리
 
 - 위치는 [분류 기준](README.md#문서-분류-기준)을 따른다. 새 명세는 분류 목차 `README.md`에, 비명세 자료는 [관련 문서](README.md#관련-문서)에 등록한다.
-- 명세 본문은 분류마다 `01-...md`부터 빈 번호 없이 매긴다(`api.md` 등 고정 이름 제외). 본문이 1개뿐이면 `README.md`를 생략하고, 2개 이상일 때만 목차 전용 `README.md`를 둔다.
+- 명세 본문은 분류마다 `01-...md`부터 빈 번호 없이 매긴다. 본문이 1개뿐이면 `README.md`를 생략하고, 2개 이상일 때만 목차 전용 `README.md`를 둔다.
 - `01-architecture.md`는 `아키텍처와 경계` → `소스 구조` → (고유 기술 절) → `남은 작업과 리스크` 순서로 구성한다.
 - 테스트 판정은 최신 결과만 남기고 변경 이력은 로그·PR에 둔다. 지침은 `AGENTS.md`, 실행 안내는 루트 `README.md`에서 관리한다.
 - 문서 이동·제목 변경 후 `python3 .github/scripts/check_docs.py`로 링크·앵커·등록 여부를 확인한다(CI 동일)."""
@@ -201,6 +201,9 @@ def check(root):
             h2 = [s for _, s in body_lines(readme_p) if s.startswith("## ")]
             if h2:
                 errors.append(f"{d}{cat}/README.md: 다중 문서 폴더의 README.md는 목차만 둔다(본문 절 {h2} 발견)")
+        unnumbered = [x for x in content_md if not NUM_RE.match(x)]
+        if unnumbered:
+            errors.append(f"{d}{cat}: 번호 없는 본문 문서 금지 {unnumbered}")
         nums = sorted(int(m.group(1)) for x in content_md if (m := NUM_RE.match(x)))
         if not nums or nums != list(range(1, len(nums) + 1)):
             errors.append(f"{d}{cat}: 번호가 01부터 연속이 아니다 {nums}")

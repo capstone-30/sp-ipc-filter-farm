@@ -1,0 +1,34 @@
+Linux 수정본 검증 — 2026-11-16 (Asia/Seoul)
+
+대상: 0ad6308d6c17162b0475fe668722e630fe84050f + 기존 미커밋 AGENTS.md/check_docs.py 변경.
+호스트: computer.tukorea.ac.kr:22000 / ce22b035
+환경: Ubuntu 24.04, Linux 6.8.0-149-generic x86_64, gcc 13.3.0.
+원격 격리 경로: ~/ipcff-risk-fixes-20261116 (기존 작업 디렉터리 보존).
+소스 tar SHA256: 280056a8a6fbcc02f818f7b55eb9c07e12fb95c6a8274f24b78b65e9ac461a1c
+근거: bench/results/linux-risk-fixes-20261116/ (소스, 보충 참조 자료, 실행기, 개별 로그, SHA256SUMS).
+
+최종 판정: 아래 검사 통과. 소스 코드 수정 없음.
+- make -j2 all check-headers 및 phase1/phase2 × pipe/sysv_mq/sysv_shm: 경고 0.
+- make test test-mq test-shm: 공통·팀·메타/FIFO 보호·IPC loopback·장애·정리 통과.
+- python3 tests/test_check_results.py, tests/test_package.py, bash tests/test_aggregate.sh 통과.
+- make test-app IPC=fifo/sysv_mq/sysv_shm/posix_shm 통과.
+  불량 BYE 거절, 역순·중복·변조 응답, 2클라×1000장, 스레드 수, SIGINT·재시작 포함.
+- sysv_shm DEPTH=1/4/16 응용 검사 통과.
+- make test-pipe test-bench 통과.
+- make package-draft 후 validation/unpacked에 해제, 전체 빌드·헤더 검사 통과.
+- 해제본 sysv_mq/sysv_shm loopback 및 pipe 프로토콜 검사 통과.
+- 해제본 make test-bench 통과: 필수 3IPC 기초·응용·개선 smoke, 원자료·자원 sidecar 확인.
+- python3 .github/scripts/check_docs.py 재검사 통과.
+- 최종 ipcs -q/-m/-s 및 /dev/shm: 본인 자원 잔존 0.
+  다른 사용자 ce23e011의 기존 semaphore는 보존했다.
+- 최종 ps: 프로젝트 server/client/pipe_run 잔존 0.
+
+실행 중 오류와 재검사:
+1. 최초 docs rc=1: 전송에서 tests/logs, submission 초안, S5 근거를 제외해 링크 대상 10개 누락.
+   references.tar로 보충 후 docs-recheck.log에서 0건 확인. 제품 결함 아님.
+2. 최초 unpack-smoke rc=1: 추가 DEPTH=1 응용 검사와 같은 팀 SHM 키를 동시에 사용.
+   활성 서버를 보존하며 File exists로 거절했다. 추가 검사 종료 후 순차 재실행은 통과.
+   unpack-smoke-recheck.log 및 postcheck.log 참조. 최초 run.log의 failed=1은 보존했다.
+
+미확인: 정식 성능 재측정·최종 보고서/PPT/영상 포함 완성 제출 패키지·Linux sanitizer.
+과거 측정 수치나 예측 시점을 갱신하지 않았다.
