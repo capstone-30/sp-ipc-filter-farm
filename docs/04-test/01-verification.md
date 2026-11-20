@@ -8,19 +8,19 @@ CI는 Linux에서 경고 없는 전체 빌드·헤더 검사와 공통·IPC·MQ�
 
 ### 현재 검증 판정
 
-2026-11-16에 메타/FIFO·BYE·패키지 수정본의 Linux 회귀를 확인했다. 정식 성능은 재측정하지 않았으므로 아래 성능 산출물 판정은 기존 로그·스냅샷의 리비전에 한정한다.
+2026-11-19~20에 현재 작업본의 Linux 24단계 전체 회귀 검증과 정식 성능 재측정(`basic`, `app`, `improve`)을 완료했다. 별도 S5 큐 확대 비교와 데모·`strace`·R3 진단은 2026-11-13 검증 자료를 유지한다.
 
 | 환경 | 판정 | 범위 |
 | --- | --- | --- |
 | macOS 공통·도구 | 통과 | 공통 모듈·헤더·GRAY 동등성·IPC 유틸·옵션·집계/그래프 fixture·문법·문서·빌드 dry-run·초안 tar를 확인했다([로그](../../tests/logs/macos-assignment-contract.log)). |
-| macOS 수정본 | 통과 | 메타/FIFO 파일 보호·실패 회수·장애·취소·재시작을 네이티브와 ASan/UBSan으로 확인했다. 공통·옵션·집계·패키지·제출 검사도 통과했다. Linux 판정은 아래 별도 실행 결과를 따른다. |
+| macOS 수정본 | 통과 | 메타/FIFO 파일 보호·실패 회수·장애·취소·재시작을 네이티브와 ASan/UBSan으로 확인했다. 공통·옵션·집계·패키지·제출 검사도 통과했다([로그](../../tests/logs/macos-risk-fixes.log)). |
 | 제출 검사 | 통과 | 합성 S1 전체 조합 통과와 작은 크기·IPC 누락 12종 및 기존 대형 범위만 있는 자료의 거절을 확인했다. |
-| Linux 수정본 빌드·회귀 | 통과 | Ubuntu 24.04·gcc 13.3에서 전체·6개 개별 빌드·헤더·단위·팀·IPC·응용 5종·SHM depth=1/4/16·불량 BYE·장애·재시작·정리·벤치 smoke를 확인했다. 초안 tar를 새 경로에 해제해 빌드·실행·벤치 smoke도 통과했고 본인 IPC·응용 프로세스 잔존은 없었다. |
-| 기초 산출물 | 검증 통과 | [360회·135만 표본과 검증 한계](../basic-measurement.md#검증-판정과-남은-확인)를 따른다. |
-| 응용·개선·S5 산출물 | 검증 통과 | [측정 결과](../app-measurement.md#검증-판정과-남은-확인)와 [S5 3쌍 비교](../app-measurement.md#s5-mq-큐-용량)를 따른다. |
-| 데모·R3 | 정합성·정정 범위 통과 | [이미지 대조·9개 CPU 구간·제어 I/O·R3 측정 후 정정](../diagnostics-measurement.md)을 따른다. |
+| Linux 전체 회귀 (2026-11-19) | 통과 | Ubuntu 24.04·Linux `6.8.0-149-generic`·gcc 13.3에서 문서·전체/6개 개별 빌드·헤더·단위·팀·IPC·응용 5종·SHM `depth=1/4/16`·불량 BYE·장애·재시작·정리·벤치 smoke·초안 tar 해제 빌드·실행·smoke 24단계 전건을 통과했고 본인 IPC·프로세스 잔존은 없었다([로그](../../tests/logs/linux-remeasure-20261119.log)). |
+| 기초 산출물 (2026-11-19 재측정) | 검증 통과 | [360회·135만 표본과 빌드 로그·바이너리 해시 검증](../basic-measurement.md#검증-판정과-남은-확인)을 따른다. |
+| 응용·개선·S5 산출물 (2026-11-19/20 재측정) | 검증 통과 | [응용 156회·개선 18회 재측정 결과](../app-measurement.md#검증-판정과-남은-확인)와 [별도 S5 3쌍 비교(2026-11-13)](../app-measurement.md#s5-mq-큐-용량)를 따른다. |
+| 데모·R3 (2026-11-13) | 정합성·정정 범위 통과 | [이미지 대조·9개 CPU 구간·제어 I/O·R3 측정 후 정정](../diagnostics-measurement.md)을 따른다. |
 
-최신 Linux 근거는 [linux-risk-fixes.log](../../tests/logs/linux-risk-fixes.log), macOS 근거는 [macos-risk-fixes.log](../../tests/logs/macos-risk-fixes.log)다. Linux 소스 스냅샷·개별 로그·해시는 로컬 `bench/results/linux-risk-fixes-20261116/`에 보존했다. 전송에서 제외한 문서 참조 자료를 보충한 문서 재검사와, 같은 팀 키를 쓰는 검사 간 병행 충돌을 제거한 패키지 실행 재검사가 각각 통과했다.
+최신 Linux 회귀·재측정 근거는 [linux-remeasure-20261119.log](../../tests/logs/linux-remeasure-20261119.log), 이전 11-16 수정본 회귀 근거는 [linux-risk-fixes.log](../../tests/logs/linux-risk-fixes.log), macOS 근거는 [macos-risk-fixes.log](../../tests/logs/macos-risk-fixes.log)다. 클린 빌드 로그(`build.log`), 실행 바이너리 9종 해시(`binaries.sha256`), 재측정 원자료·보존 해시는 로컬 `bench/results/remeasure-20261119/` 및 `bench/results/{basic-run,app-run,improvement-run}/`에 보존했다(기존 11-12~13 로컬 원자료는 `bench/results/archive-20261113/` 보관).
 
 ### 검증 항목과 판정 기준
 

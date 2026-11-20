@@ -1,7 +1,7 @@
-recorded_at=2026-11-12T08:31:11Z
+recorded_at=2026-11-19T09:05:14Z
 phase=basic count=1000 warmup=100 repeats=3 workers=2 team=1
 SMOKE=no (smoke 자료는 과제 성능 결과로 사용하지 않음)
-Linux tukorea-ce 6.8.0-147-generic #147-Ubuntu SMP PREEMPT_DYNAMIC Thu Sep 24 11:33:16 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux
+Linux tukorea-ce 6.8.0-149-generic #149-Ubuntu SMP PREEMPT_DYNAMIC Fri Oct 23 13:21:10 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux
 PRETTY_NAME="Ubuntu 24.04.5 LTS"
 NAME="Ubuntu"
 VERSION_ID="24.04"
@@ -29,7 +29,7 @@ Thread(s) per core:                      1
 Core(s) per socket:                      8
 Socket(s):                               2
 Stepping:                                4
-CPU(s) scaling MHz:                      47%
+CPU(s) scaling MHz:                      56%
 CPU max MHz:                             1700.0000
 CPU min MHz:                             800.0000
 BogoMIPS:                                3400.00
@@ -60,15 +60,15 @@ Vulnerability Tsa:                       Not affected
 Vulnerability Tsx async abort:           Mitigation; Clear CPU buffers; SMT disabled
 Vulnerability Vmscape:                   Mitigation; IBPB before exit to userspace
                total        used        free      shared  buff/cache   available
-Mem:        65454204     7524600    54536152       27144     4022828    57929604
-Swap:        2097148           0     2097148
+Mem:        65454196     9461188      529356       10968    56138752    55993008
+Swap:        2097148      188908     1908240
 cc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0
 Copyright (C) 2023 Free Software Foundation, Inc.
 This is free software; see the source for copying conditions.  There is NO
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 none
-pid 442410's current affinity list: 0-15
+pid 2279480's current affinity list: 0-15
 /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor=powersave
 /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor=powersave
 /sys/devices/system/cpu/cpu10/cpufreq/scaling_governor=powersave
@@ -92,7 +92,7 @@ kernel.shmmax = 18446744073692774399
 kernel.shmall = 18446744073692774399
 kernel.sem = 32000	1024000000	500	32000
 Filesystem     1K-blocks  Used Available Use% Mounted on
-tmpfs           32727100     0  32727100   0% /dev/shm
+tmpfs           32727096     0  32727096   0% /dev/shm
 
 ------ Message Queues --------
 key        msqid      owner      perms      used-bytes   messages    
@@ -102,6 +102,7 @@ key        shmid      owner      perms      bytes      nattch     status
 
 ------ Semaphore Arrays --------
 key        semid      owner      perms      nsems     
+0xcd020ee8 0          ce23e011   600        1         
 
 wait: FIFO/pipe poll<=100ms; SysV retry=1ms; workers fixed; affinity inherited
 CPU: RSS start -> getrusage start; getrusage end -> RSS end. RSS is boundary sample, sums may double-count shared pages.

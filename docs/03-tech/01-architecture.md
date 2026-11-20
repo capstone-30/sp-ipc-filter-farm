@@ -85,6 +85,6 @@
 
 | 대기 항목 | 이유·재개 조건 |
 | --- | --- |
-| 최종 보고서·PPT·영상·AI 대화 캡처 | 팀원·담당·제출 일시와 최종 자료가 필요하다. 확인 후 [서식](../final-report-template.md)에 반영한다. |
+| 최종 보고서·PPT·영상·AI 대화 캡처 | [제출본 보고서](../../submission/final-report.md)·[인쇄용 HTML](../../submission/final-report.html)·[PPT](../../submission/presentation-draft.pptx)·[대본](../../submission/presentation-script.md)·[AI 기록](../ai-record.md)은 실측 기준으로 작성했다. 팀원 정보·제출 일시·AI 대화 기록·발표 동영상 녹화본을 채운 뒤 PDF/최종본으로 확정한다. |
 | 제출 패키지 | 초안의 새 경로 빌드·실행·벤치 smoke는 통과했다([판정](../04-test/01-verification.md#현재-검증-판정)). 최종 자료 확보 후 완성 패키지를 재검증한다. |
 | 재측정 환경 | 새 환경에서는 SHM 용량·메모리·S5 확대 권한을 확인한다. BENCH_TIMEOUT으로 제한하고 반복 축소를 환경에 기록한다. |

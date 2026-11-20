@@ -2,7 +2,7 @@
 
 설계과제 명: IPC Filter Farm · 팀 번호: 1 · 작성일: 2026-11-04
 
-제출 전 초안이다. 본문 근거는 아래 원본 문서에서 관리하며, 최종 제출은 [서식](final-report-template.md)을 따른다. [현재 검증 판정](04-test/01-verification.md#현재-검증-판정)과 [남은 작업](03-tech/01-architecture.md#남은-작업과-리스크)을 확인한다.
+제출 전 초안이다. 본문 근거는 아래 원본 문서에서 관리하며, 최종 제출은 [서식](final-report-template.md)을 따른다. 서식 1~9장을 모두 채운 제출용 통합 본문은 [최종보고서 제출본 초안](../submission/final-report.md)과 [인쇄용 HTML](../submission/final-report.html)에 작성했다. [현재 검증 판정](04-test/01-verification.md#현재-검증-판정)과 [남은 작업](03-tech/01-architecture.md#남은-작업과-리스크)을 확인한다.
 
 | 학번 | 성명 | 역할 | 담당 IPC 버전 |
 | --- | --- | --- | --- |
@@ -54,4 +54,4 @@ flowchart LR
 
 ## 7~9. 팀워크·결론·부록
 
-팀원·담당·기여는 미제공이므로 확인 후 작성한다. [AI 오류 검증 2건](ai-record.md)의 대화 캡처와 최종 발표·영상이 필요하다. [실행·패키징](../README.md#데모진단제출-패키지)과 [PPT 초안](../submission/presentation-draft.pptx)을 참고한다.
+팀원·담당·기여는 미제공이므로 확인 후 작성한다. [AI 활용·오류 검증 기록](ai-record.md)의 대화 캡처와 최종 발표 영상이 필요하다. [실행·패키징](../README.md#데모진단제출-패키지), [발표자료 초안](../submission/presentation-draft.pptx), [발표 대본](../submission/presentation-script.md)을 참고한다.

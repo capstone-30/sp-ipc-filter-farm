@@ -132,7 +132,10 @@ python3 tests/test_package.py
 - [IPC 구현·성능 예측](docs/ipc-prediction.md)
 - [AI 오류 검증 기록](docs/ai-record.md)
 - [IEEE 논문 템플릿](docs/paper/README.md)
+- [최종보고서 제출본 초안](submission/final-report.md)
+- [최종보고서 인쇄용 HTML](submission/final-report.html)
 - [발표자료 초안](submission/presentation-draft.pptx)
+- [발표 대본](submission/presentation-script.md)
 
 ### 문서 분류 기준
 

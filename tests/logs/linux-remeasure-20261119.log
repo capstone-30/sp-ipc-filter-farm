@@ -1,0 +1,33 @@
+Linux 전체 회귀 및 정식 성능 재측정 검증 — 2026-11-19~20 (Asia/Seoul)
+
+호스트: computer.tukorea.ac.kr:22000 / ce22b035
+환경: Ubuntu 24.04.5 LTS, Linux 6.8.0-149-generic x86_64, gcc 13.3.0, Python 3.12.3, matplotlib 3.6.3.
+원격 격리 경로: ~/ipcff-verify-20261119 (회귀 검증), ~/ipcff-remeasure-20261119 (정식 재측정).
+기존 원격 ~/sp-ipc-filter-farm 및 ~/ipcff-risk-fixes-20261116 보존.
+
+1. Linux 수정본 전체 회귀 검증 (2026-11-19 08:21:14Z)
+- 검증 아카이브 SHA-256: 521c1d85e5e84cf336761710e9e824e2cf295c2a7036208f5952cb8f885787a6
+- 24/24 단계 통과(종료 0):
+  check_docs, make -j2 all check-headers, 6개 개별 빌드, make test/test-mq/test-shm/test-pipe,
+  make test-app(fifo, sysv_mq, sysv_shm DEPTH=1/4/16, posix_shm), make test-bench,
+  test_check_results.py, test_package.py, test_aggregate.sh,
+  make package-draft 해제 후 빌드·loopback·pipe 프로토콜·test-bench, 원격 기존 결과 check_results.sh.
+- 사후 확인: 본인 ipcs -q/-m/-s, /dev/shm, 프로젝트 프로세스 잔존 0.
+
+2. 정식 성능 재측정 (2026-11-19 08:52Z ~ 16:22:21Z, 한국 17:52 ~ 11-20 01:22 KST)
+- 클린 빌드 로그 및 실행 바이너리 9종 SHA-256 보존:
+  로컬 bench/results/remeasure-20261119/build.log, binaries.sha256, run.log, check_results.log, postcheck.txt
+- source.tar SHA-256 (3개 실행 동일):
+  18ecd19b728cc8aba6cc2b890bcd8b794d9e84dc4d0e63e3ff9275ce8e101d93
+- 실행 내역 및 로컬 전수 검증(2026-11-20):
+  - improvement-run (recorded_at=2026-11-19T08:52:06Z): 18회 · 36,000표본 · 36 클라 로그 · orig_sums=279 · pres_sums=283
+  - basic-run       (recorded_at=2026-11-19T09:05:14Z): 360회 · 1,350,000표본 · 1,350 클라 로그 · orig_sums=8,043 · pres_sums=8,059
+  - app-run         (recorded_at=2026-11-19T12:03:01Z): 156회 · 219,000표본 · 219 클라 로그 · orig_sums=2,026 · pres_sums=2,033
+- 전 534회 실행: matched=1000 mismatches=0 warmup=100, stderr 비어 있음, 본인 ipcs 잔존 0.
+- bash bench/check_results.sh 원격·로컬 모두 통과(결과 해시·최소 조합·그래프 18종 존재 확인 OK).
+- 기존 2026-11-12~13 로컬 결과는 bench/results/archive-20261113/에 보존.
+
+3. 미재측정·유지 범위
+- S5 큐 확대(kernel.msgmnb=65536)는 비대화형 sudo 권한 부재로 2026-11-13 별도 3쌍 비교 자료를 유지.
+- 데모 10회·strace·R3 확장 I/O 진단은 2026-11-13 검증 자료를 유지.
+- Linux ASan/UBSan 및 최종 팀원·PDF·영상 포함 osproject_1.tar 검증은 미실행.
