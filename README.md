@@ -6,9 +6,13 @@ Linux IPC 기초 성능을 측정하고, 이미지 필터 응용에 적합한 IP
 
 [지원 범위](docs/01-func/01-requirements.md#범위) · [검증 판정](docs/04-test/01-verification.md#현재-검증-판정)
 
+![IPC Filter Farm 핵심 기능](docs/assets/key-features.svg)
+
 ## 기술 스택
 
 C11·POSIX, pthread, Make, Bash를 사용하며 그래프 생성에만 Python 3·matplotlib을 쓴다. 실행·측정은 Linux에서 수행한다([구현 제약](docs/03-tech/03-protocol.md#구현-제약)).
+
+![IPC Filter Farm 시스템 아키텍처](docs/assets/architecture.svg)
 
 ## 시작하기
 
